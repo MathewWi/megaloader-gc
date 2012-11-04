@@ -12,10 +12,12 @@
 #include <stdlib.h>
 #include <ogcsys.h>
 #include <string.h>
-#include "main.h"
-#include "IPLFontWrite.h"
-#include "FrameBufferMagic.h"
+
 #include "dvd.h"
+#include "FrameBufferMagic.h"
+#include "IPLFontWrite.h"
+#include "main.h"
+#include "wkf.h"
 
 extern void __SYS_ReadROM(void *buf,u32 len,u32 offset);
 

@@ -10,11 +10,13 @@
 #define FRAMEBUFFERMAGIC_H
 
 #include <gccore.h>
-#include "main.h"
-#include "IPLFontWrite.h"
-#include "dvd.h"
 
-#define MENU_VERSION "MegaLoader"
+#include "dvd.h"
+#include "IPLFontWrite.h"
+#include "main.h"
+#include "wkf.h"
+
+#define _VERSION "v1.1"
 
 #define B_NOSELECT 0
 #define B_SELECTED 1
@@ -50,6 +52,7 @@ enum TextureId
 	TEX_LOGOPSX,
 	TEX_LOGOSNES,
 	TEX_LOGOTGX,
+	TEX_LOGOVECTREX,
 	TEX_LOGOSCUMMVM,
 	TEX_LOGOCHIP8,
 	TEX_LOGOPONG,
@@ -59,6 +62,7 @@ enum TextureId
 	TEX_LOGOAF,
 	TEX_LOGOBREAK,
 	TEX_LOGOSNOW,
+	TEX_LOGOMETH,
 	TEX_LOGOGC,
 	TEX_LOGOQBOX
 	

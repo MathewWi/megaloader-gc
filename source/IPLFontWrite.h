@@ -9,9 +9,10 @@
 #ifndef IPLFontWrite_H
 #define IPLFontWrite_H
 
+#include "dvd.h"
 #include "FrameBufferMagic.h"
 #include "main.h"
-#include "dvd.h"
+#include "wkf.h"
 
 #define wait_press_A() ({while((PAD_ButtonsHeld(0) & PAD_BUTTON_A)){VIDEO_WaitVSync();} while(!(PAD_ButtonsHeld(0) & PAD_BUTTON_A)){VIDEO_WaitVSync();}})
 

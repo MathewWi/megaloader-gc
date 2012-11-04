@@ -43,7 +43,7 @@ MACHDEP =  -DGEKKO -mvgc -mcpu=750 -meabi -mhard-float
 #---------------------------------------------------------------------------------
 TARGET		:=	megaloader
 BUILD		:=	build
-SOURCES		:=  source \
+SOURCES		:=	source \
 				source/aram \
 				source/images \
 				source/images/buttons
@@ -51,7 +51,7 @@ DATA		:=	data
 TEXTURES	:=	source/images \
 				source/images/buttons
 INCLUDES	:= 	include $(SOURCES)
-
+VERSION = _v1.1
 #---------------------------------------------------------------------------------
 # options for code generation
 #---------------------------------------------------------------------------------
@@ -143,8 +143,18 @@ clean:
 #---------------------------------------------------------------------------------
 clean-all:
 	@echo clean ...
-	@rm -fr $(BUILD) $(OUTPUT).elf $(OUTPUT).dol distro megaloader.rar
+	@rm -fr $(BUILD) $(OUTPUT).elf $(OUTPUT).dol MegaLoader MegaLoader*.rar iso/disc/megaloader.dol
 
+#---------------------------------------------------------------------------------
+rar:
+	@rm -rf MegaLoader MegaLoader*.rar iso/disc/megaloader.dol
+	@mkdir MegaLoader
+	@cp megaloader.dol MegaLoader
+	@iso/dollz3 megaloader.dol MegaLoader/megaloader-lz.dol -m
+	@iso/dollz3 megaloader.dol MegaLoader/megaloader-lz-viper.dol -m -v
+	@iso/dollz3 megaloader.dol iso/disc/megaloader.dol -m
+	@iso/mkisofs -R -J -G iso/gbi.hdr -no-emul-boot -b megaloader.dol -o MegaLoader/megaloader.iso iso/disc/
+	@rar a MegaLoader$(VERSION).rar MegaLoader/megaloader.dol MegaLoader/megaloader-lz.dol MegaLoader/megaloader-lz-viper.dol MegaLoader/megaloader.iso
 #---------------------------------------------------------------------------------
 run:	
 	$(DEVKITPRO)/emulators/gcube/gcube $(OUTPUT).dol

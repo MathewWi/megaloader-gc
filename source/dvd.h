@@ -2,9 +2,11 @@
 #define DVD_H
 
 #include "aram/sidestep.h"
-#include "main.h"
 #include "FrameBufferMagic.h"
 #include "IPLFontWrite.h"
+#include "main.h"
+#include "wkf.h"
+
 
 #define DVD_MAGIC   0xC2339F3D
 
