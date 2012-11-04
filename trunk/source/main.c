@@ -18,10 +18,13 @@
 #include <iso9660.h>
 
 #include "aram/sidestep.h"
-#include "main.h"
+#include "dvd.h"
 #include "FrameBufferMagic.h"
 #include "IPLFontWrite.h"
-#include "dvd.h"
+#include "main.h"
+#include "wkf.h"
+
+
 
 #define DEFAULT_FIFO_SIZE    (256*1024)					//(64*1024) minimum
 	
@@ -160,71 +163,74 @@ void RunDOL(char *EmuName)
 {
 	char RunEmu[10];
 	char Found[10];
-
-	fatInitDefault ();
 	DrawFrameStart();
 
-	ret =  slotA->startup() && fatMountSimple("SDA1", slotA);
-	ret1 = slotB->startup() && fatMountSimple("SDB1", slotB);	
 
-//	CHECK WHICH SD CARDSLOT(S) ARE DETECTED AND DRAW
-//	SD CARDSLOT A	
-	if (ret <= 0) {
-		DrawImage(TEX_SDOUT, 25+(0.50*116), 125, 175, 200, 0, 0.0f, 1.0f, 0.0f, 1.0f);
-		WriteFont(25+(0.60*116)+10,190, "SD CARD A");
-		WriteFont(25+(0.60*116)+10,215, "No SD Card");
-	}
-	else {
-		DrawImage(TEX_SDIN, 25+(0.50*116), 125, 175, 200, 0, 0.0f, 1.0f, 0.0f, 1.0f);
-		WriteFont(25+(0.60*116)+10,190, "SD CARD A");
-	}
-//	SD CARDSLOT B
-	if (ret1 <= 0) {
-		DrawImage(TEX_SDOUT, 25+(3*116), 125, 175, 200, 0, 0.0f, 1.0f, 0.0f, 1.0f);
-		WriteFont(25+(3.10*116)+10,190, "SD CARD B");
-		WriteFont(25+(3.10*116)+10,215, "No SD Card");
-	}
-	else {
-		DrawImage(TEX_SDIN, 25+(3*116), 125, 175, 200, 0, 0.0f, 1.0f, 0.0f, 1.0f);
-		WriteFont(25+(3.10*116)+10,190, "SD CARD B");
-	}
-	
-//	SEARCH BOTH CARDSLOTS....SHAKE THE TREE AND SEE WHAT FALLS
-	if (ret > 0 || ret1 > 0 )
-	{
-		if (ret > 0){ 
-		WriteFont(25+(0.60*116)+10,215, "Searching..."); 
+		fatInitDefault ();
+		ret =  slotA->startup() && fatMountSimple("SDA1", slotA);
+		ret1 = slotB->startup() && fatMountSimple("SDB1", slotB);	
+
+//		CHECK WHICH SD CARDSLOT(S) ARE DETECTED AND DRAW
+//		SD CARDSLOT A	
+		if (ret <= 0) {
+			DrawImage(TEX_SDOUT, 25+(0.50*116), 125, 175, 200, 0, 0.0f, 1.0f, 0.0f, 1.0f);
+			WriteFont(25+(0.60*116)+10,190, "SD CARD A");
+			WriteFont(25+(0.60*116)+10,215, "No SD Card");
 		}
-		
-		sprintf(RunEmu,"SDA1:/%s",EmuName);
-		fp = fopen(RunEmu, "r");
-		if (fp == NULL)
+		else {
+			DrawImage(TEX_SDIN, 25+(0.50*116), 125, 175, 200, 0, 0.0f, 1.0f, 0.0f, 1.0f);
+			WriteFont(25+(0.60*116)+10,190, "SD CARD A");
+		}
+//		SD CARDSLOT B
+		if (ret1 <= 0) {
+			DrawImage(TEX_SDOUT, 25+(3*116), 125, 175, 200, 0, 0.0f, 1.0f, 0.0f, 1.0f);
+			WriteFont(25+(3.10*116)+10,190, "SD CARD B");
+			WriteFont(25+(3.10*116)+10,215, "No SD Card");
+		}
+		else {
+			DrawImage(TEX_SDIN, 25+(3*116), 125, 175, 200, 0, 0.0f, 1.0f, 0.0f, 1.0f);
+			WriteFont(25+(3.10*116)+10,190, "SD CARD B");
+		}
+	
+//		SEARCH BOTH CARDSLOTS....SHAKE THE TREE AND SEE WHAT FALLS
+		if (ret > 0 || ret1 > 0 ) 
 		{
-			sprintf(RunEmu,"SDA1:/emus/%s",EmuName);
+			if (ret > 0){ 
+				WriteFont(25+(0.60*116)+10,215, "Searching..."); 
+			}
+		
+			sprintf(RunEmu,"SDA1:/%s",EmuName);
 			fp = fopen(RunEmu, "r");
 			if (fp == NULL)
 			{
-				sprintf(RunEmu,"SDA1:/megaloader/%s",EmuName);
+				sprintf(RunEmu,"SDA1:/emus/%s",EmuName);
 				fp = fopen(RunEmu, "r");
 				if (fp == NULL)
 				{
-					if (ret > 0) WriteFont(25+(0.60*116)+10,265, "Not Found"); 
-					if (ret1 > 0) WriteFont(25+(3.10*116)+10,215, "Searching...");
-					
-					sprintf(RunEmu,"SDB1:/%s",EmuName);
+					sprintf(RunEmu,"SDA1:/megaloader/%s",EmuName);
 					fp = fopen(RunEmu, "r");
 					if (fp == NULL)
 					{
-						sprintf(RunEmu,"SDB1:/emus/%s",EmuName);
+						if (ret > 0) WriteFont(25+(0.60*116)+10,265, "Not Found"); 
+						if (ret1 > 0) WriteFont(25+(3.10*116)+10,215, "Searching...");
+					
+						sprintf(RunEmu,"SDB1:/%s",EmuName);
 						fp = fopen(RunEmu, "r");
 						if (fp == NULL)
 						{
-							sprintf(RunEmu,"SDB1:/megaloader/%s",EmuName);
+							sprintf(RunEmu,"SDB1:/emus/%s",EmuName);
 							fp = fopen(RunEmu, "r");
 							if (fp == NULL)
 							{
-								if (ret1 > 0) WriteFont(25+(3.10*116)+10,265, "Not Found");
-								DrawFrameFinish();
+								sprintf(RunEmu,"SDB1:/megaloader/%s",EmuName);
+								fp = fopen(RunEmu, "r");
+								if (fp == NULL)
+								{
+									if (ret1 > 0) WriteFont(25+(3.10*116)+10,265, "Not Found");
+//									DrawFrameFinish();
+								}
+								else { sprintf(Found,"Found %s",RunEmu); WriteFont(25+(0.75*116)+10,425, Found); DrawFrameFinish();
+								}
 							}
 							else { sprintf(Found,"Found %s",RunEmu); WriteFont(25+(0.75*116)+10,425, Found); DrawFrameFinish(); }
 						}
@@ -234,35 +240,42 @@ void RunDOL(char *EmuName)
 				}
 				else { sprintf(Found,"Found %s",RunEmu); WriteFont(25+(0.75*116)+10,425, Found); DrawFrameFinish(); }
 			}
-			else { sprintf(Found,"Found %s",RunEmu); WriteFont(25+(0.75*116)+10,425, Found); DrawFrameFinish(); }
+			else {	sprintf(Found,"Found %s",RunEmu); WriteFont(25+(0*116)+10,125, Found); DrawFrameFinish(); }
 		}
-		else {	sprintf(Found,"Found %s",RunEmu); WriteFont(25+(0*116)+10,125, Found); DrawFrameFinish(); }
-	}
 	
-//	IF Fp EXISTS THEN TRY DOLtoARAM
-	if (fp != NULL)
-	{	
-		fseek(fp, 0, SEEK_END);
-		int size = ftell(fp);
-		fseek(fp, 0, SEEK_SET);
-		if ((size > 0) && (size < (AR_GetSize() - (64*1024)))) {
-			u8 *dol = (u8*) memalign(32, size);
-			if (dol) {
-				fread(dol, 1, size, fp);
-				DOLtoARAM(dol);
+//		IF fp EXISTS THEN TRY DOLtoARAM
+		if (fp != NULL)
+		{	
+			fseek(fp, 0, SEEK_END);
+			int size = ftell(fp);
+			fseek(fp, 0, SEEK_SET);
+			if ((size > 0) && (size < (AR_GetSize() - (64*1024)))) {
+				u8 *dol = (u8*) memalign(32, size);
+				if (dol) {
+					fread(dol, 1, size, fp);
+					DOLtoARAM(dol);
+				}
 			}
+			fclose(fp);
+			return;
 		}
-		fclose(fp);
-		return;
+
+//		DOL NOT FOUND ON SD SLOT A/B...UNMOUNT CARD
+		if (ret > 0)  fatUnmount("SDA1");
+		if (ret1 > 0) fatUnmount("SDB1");	
+
+	if(__wkfSpiReadId() != 0 && __wkfSpiReadId() != 0xFFFFFFFF) {
+//		DrawFrameStart();
+		DrawImage(TEX_DVDOUT, 25+(1.25*116), 85, 300, 300, 0, 0.0f, 1.0f, 0.0f, 1.0f);
+		WriteFont(25+(1.70*116)+10,125, "WKF DETECTED");
+		WriteFont(25+(1.60*116)+10,300, "Not ISO9660 Disc");
+		DrawFrameFinish();
+		sleep(5);
 	}
-
-//	DOL NOT FOUND ON SD SLOT A/B...UNMOUNT CARD
-	if (ret > 0)  fatUnmount("SDA1");
-	if (ret1 > 0) fatUnmount("SDB1");	
-
-//	DOL NOT FOUND ON SD SLOT A/B...SEARCH ON DISC
-	DVD_ISO9660(EmuName);
-
+	else {
+//		DOL NOT FOUND ON SD SLOT A/B...SEARCH ON DISC
+		DVD_ISO9660(EmuName);
+	}
 	return;
 }
 
@@ -293,13 +306,18 @@ void main_loop()
 			if (curMenu == 1) { curMenu = 0; return; }
 		}
 
-		//EXIT TO SWISS	
+		//EXIT
+		if (PAD_ButtonsDown(0) & PAD_BUTTON_START) {
+			exit(1);
+		}
+
+		//EXIT TO SWISS
 		if (PAD_ButtonsDown(0) & PAD_TRIGGER_Z) {
 			sprintf(EmuName, "swiss.dol");
 			RunDOL(EmuName);
 		}
 		
-		//MENU SELECTOR
+		//MENU SELECTOR MENU 0
 		if ((PAD_ButtonsDown(0) & PAD_BUTTON_LEFT) && curMenu == 0) { 	
 			if (x <= 460 && x > 25) { x = x - 145; } doBackdrop0(); DrawMenuSelector(x,y); DrawFrameFinish();
 		}
@@ -313,6 +331,7 @@ void main_loop()
 			if (y < 285 && y >= 85) { y = y + 100; } doBackdrop0(); DrawMenuSelector(x,y); DrawFrameFinish();
 
 		}
+		//MENU SELECTOR MENU 1
 		if ((PAD_ButtonsDown(0) & PAD_BUTTON_LEFT) && curMenu == 1) { 	
 			if (x <= 460 && x > 25) { x = x - 145; } doBackdrop1(); DrawMenuSelector(x,y); DrawFrameFinish();
 		}

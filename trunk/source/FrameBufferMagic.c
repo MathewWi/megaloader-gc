@@ -13,12 +13,14 @@
 #include <malloc.h>
 #include <gccore.h>
 #include <ogc/exi.h>
+
+#include "dvd.h"
 #include "FrameBufferMagic.h"
 #include "IPLFontWrite.h"
 #include "main.h"
-#include "dvd.h"
-#include "images/buttons/btns.h"
+#include "wkf.h"
 
+#include "images/buttons/btns.h"
 #include "backdrop_tpl.h"
 #include "backdrop.h"
 #include "sdin_tpl.h"
@@ -70,6 +72,9 @@
 #include "logosnes.h"
 #include "logotgx_tpl.h"
 #include "logotgx.h"
+#include "logovectrex_tpl.h"
+#include "logovectrex.h"
+
 
 #include "logoscummvm_tpl.h"
 #include "logoscummvm.h"
@@ -89,6 +94,10 @@
 #include "logobreak.h"
 #include "logosnow_tpl.h"
 #include "logosnow.h"
+#include "logometh_tpl.h"
+#include "logometh.h"
+
+
 #include "logogc_tpl.h"
 #include "logogc.h"
 #include "logoqbox_tpl.h"
@@ -160,6 +169,9 @@ TPLFile logosnesTPL;
 GXTexObj logosnesTexObj;
 TPLFile logotgxTPL;
 GXTexObj logotgxTexObj;
+TPLFile logovectrexTPL;
+GXTexObj logovectrexTexObj;
+
 
 TPLFile logoscummvmTPL;
 GXTexObj logoscummvmTexObj;
@@ -179,10 +191,15 @@ TPLFile logobreakTPL;
 GXTexObj logobreakTexObj;
 TPLFile logosnowTPL;
 GXTexObj logosnowTexObj;
+TPLFile logomethTPL;
+GXTexObj logomethTexObj;
+
+
 TPLFile logogcTPL;
 GXTexObj logogcTexObj;
 TPLFile logoqboxTPL;
 GXTexObj logoqboxTexObj;
+
 
 
 void init_textures() 
@@ -254,7 +271,10 @@ void init_textures()
 	TPL_GetTexture(&logosnesTPL,logosnes,&logosnesTexObj);
 	TPL_OpenTPLFromMemory(&logotgxTPL, (void *)logotgx_tpl, logotgx_tpl_size);
 	TPL_GetTexture(&logotgxTPL,logotgx,&logotgxTexObj);
-	
+	TPL_OpenTPLFromMemory(&logovectrexTPL, (void *)logovectrex_tpl, logovectrex_tpl_size);
+	TPL_GetTexture(&logovectrexTPL,logovectrex,&logovectrexTexObj);
+
+
 	TPL_OpenTPLFromMemory(&logoscummvmTPL, (void *)logoscummvm_tpl, logoscummvm_tpl_size);
 	TPL_GetTexture(&logoscummvmTPL,logoscummvm,&logoscummvmTexObj);
 	TPL_OpenTPLFromMemory(&logochip8TPL, (void *)logochip8_tpl, logochip8_tpl_size);
@@ -273,10 +293,15 @@ void init_textures()
 	TPL_GetTexture(&logobreakTPL,logobreak,&logobreakTexObj);
 	TPL_OpenTPLFromMemory(&logosnowTPL, (void *)logosnow_tpl, logosnow_tpl_size);
 	TPL_GetTexture(&logosnowTPL,logosnow,&logosnowTexObj);
+	TPL_OpenTPLFromMemory(&logomethTPL, (void *)logometh_tpl, logometh_tpl_size);
+	TPL_GetTexture(&logomethTPL,logometh,&logomethTexObj);
+	
+	
 	TPL_OpenTPLFromMemory(&logogcTPL, (void *)logogc_tpl, logogc_tpl_size);
 	TPL_GetTexture(&logogcTPL,logogc,&logogcTexObj);
 	TPL_OpenTPLFromMemory(&logoqboxTPL, (void *)logoqbox_tpl, logoqbox_tpl_size);
 	TPL_GetTexture(&logoqboxTPL,logoqbox,&logoqboxTexObj);
+
 	
 }
 
@@ -452,6 +477,10 @@ void DrawImage(int textureId, int x, int y, int width, int height, int depth, fl
 	case TEX_LOGOTGX:
 		GX_LoadTexObj(&logotgxTexObj, GX_TEXMAP0);
 		break;
+	case TEX_LOGOVECTREX:
+		GX_LoadTexObj(&logovectrexTexObj, GX_TEXMAP0);
+		break;
+
 
 	case TEX_LOGOSCUMMVM:
 		GX_LoadTexObj(&logoscummvmTexObj, GX_TEXMAP0);
@@ -480,12 +509,18 @@ void DrawImage(int textureId, int x, int y, int width, int height, int depth, fl
 	case TEX_LOGOSNOW:
 		GX_LoadTexObj(&logosnowTexObj, GX_TEXMAP0);
 		break;
+	case TEX_LOGOMETH:
+		GX_LoadTexObj(&logomethTexObj, GX_TEXMAP0);
+		break;
+
+
 	case TEX_LOGOGC:
 		GX_LoadTexObj(&logogcTexObj, GX_TEXMAP0);
 		break;
 	case TEX_LOGOQBOX:
 		GX_LoadTexObj(&logoqboxTexObj, GX_TEXMAP0);
 		break;
+
 	}	
 
 	GX_Begin(GX_QUADS, GX_VTXFMT0, 4);
@@ -507,7 +542,7 @@ void DrawImage(int textureId, int x, int y, int width, int height, int depth, fl
 void _DrawBackdrop() 
 {
 	DrawImage(TEX_BACKDROP, 0, 0, 640, 480, 0, 0.0f, 1.0f, 0.0f, 1.0f);
-	WriteFont(30,40, MENU_VERSION);
+	WriteFont(30,40, "MegaLoader");
 }
 
 // Call this when starting a screen
@@ -602,8 +637,10 @@ void readme()
 {
 	DrawFrameStart();
 	DrawEmptyBox(25,85, vmode->fbWidth-30, 395, COLOR_BLACK);
-	
-	WriteFont(25+(1.60*116)+10,100, "MegaLoader v1");
+
+	char title[1];
+	sprintf(title, "MegaLoader %s", _VERSION);
+	WriteFont(25+(1.60*116)+10,100, title);
 	WriteFont(110,125, "Graphical Interface for Gamecube");
 	WriteFont(25+(1.53*116)+10,150, "by Megalomaniac");
 
@@ -662,10 +699,9 @@ void DrawMenuLogos0()
 	DrawImage(TEX_LOGONGP,  40+(3.75*116), 200, LOGONGP_WIDTH,LOGONGP_HEIGHT,   0, 0.0f, 1.0f, 0.0f, 1.0f);
 
 	DrawImage(TEX_LOGOPSX,  40+(0*116),    300, LOGOPSX_WIDTH,LOGOPSX_HEIGHT,   0, 0.0f, 1.0f, 0.0f, 1.0f);
-	DrawImage(TEX_LOGOGC,   40+(1.25*116), 300, LOGOGC_WIDTH, LOGOGC_HEIGHT,    0, 0.0f, 1.0f, 0.0f, 1.0f);
-//	DrawImage(TEX_X,        40+(2.50*116), 300, X_WIDTH, X_HEIGHT,              0, 0.0f, 1.0f, 0.0f, 1.0f);
-	if (easteregg == 1) 
-		DrawImage(TEX_LOGOQBOX, 40+(3.75*116), 300, LOGOQBOX_WIDTH,LOGOQBOX_HEIGHT, 0, 0.0f, 1.0f, 0.0f, 1.0f);
+	DrawImage(TEX_LOGOVECTREX,40+(1.25*116), 300, LOGOVECTREX_WIDTH, LOGOVECTREX_HEIGHT,0, 0.0f, 1.0f, 0.0f, 1.0f);
+	DrawImage(TEX_LOGOGC,	40+(2.50*116), 300, LOGOGC_WIDTH, LOGOGC_HEIGHT,    0, 0.0f, 1.0f, 0.0f, 1.0f);
+//	DrawImage(TEX_Z, 40+(3.75*116), 300, Z_WIDTH, Z_HEIGHT, 0, 0.0f, 1.0f, 0.0f, 1.0f);
 }
 
 
@@ -683,9 +719,10 @@ void DrawMenuLogos1()
 	DrawImage(TEX_LOGOBREAK, 40+(3.75*116),200, LOGOBREAK_WIDTH,LOGOBREAK_HEIGHT,0, 0.0f, 1.0f, 0.0f, 1.0f);
 
 	DrawImage(TEX_LOGOSNOW,  40+(0*116),   300, LOGOSNOW_WIDTH,LOGOSNOW_HEIGHT,  0, 0.0f, 1.0f, 0.0f, 1.0f);
-//	DrawImage(TEX_X, 40+(1.25*116), 300, X_WIDTH, X_HEIGHT, 0, 0.0f, 1.0f, 0.0f, 1.0f);
+	DrawImage(TEX_LOGOMETH,  40+(1.25*116),300, LOGOMETH_WIDTH,LOGOMETH_HEIGHT,  0, 0.0f, 1.0f, 0.0f, 1.0f);
 //	DrawImage(TEX_Y, 40+(2.50*116), 300, Y_WIDTH, Y_HEIGHT, 0, 0.0f, 1.0f, 0.0f, 1.0f);
-//	DrawImage(TEX_Z, 40+(3.75*116), 300, Z_WIDTH, Z_HEIGHT, 0, 0.0f, 1.0f, 0.0f, 1.0f);
+	if (easteregg == 1) 
+		DrawImage(TEX_LOGOQBOX, 40+(3.75*116), 300, LOGOQBOX_WIDTH,LOGOQBOX_HEIGHT, 0, 0.0f, 1.0f, 0.0f, 1.0f);
 }
 
 
@@ -712,36 +749,38 @@ NA:
 
 Main Window:
 ----------------------------------------------
-	NES  			= fceugx-gc.dol
-	SNES 			= snes9xgx-gc.dol
-	N64  			= cube64.dol	
-	GBA  			= vbagx_gc.dol
+	NES		= fceugx-gc.dol
+	SNES		= snes9xgx-gc.dol
+	N64		= cube64.dol	
+	GBA		= vbagx_gc.dol
 
-	Genesis/SMS		= genplus_cube.dol
-	TGX  			= hugo_cube.dol
-	NeoGeo CD 		= neocdredux.dol
+	Genesis/SMS	= genplus_cube.dol
+	TGX		= hugo_cube.dol
+	NeoGeo CD	= neocdredux.dol
 	NeoGeo Portable = neopopgc.dol
 
-	PSX  			= cubeSX.dol
-	GAMECUBE		= GCM
-	MarioBox		= Extra Info
+	PSX		= cubeSX.dol
+	Vectrex		= vecxgc.dol
+	GAMECUBE	= GCM
+
 
 
 
 Second Window:	
 ----------------------------------------------
-	ScummVM			= scummvm-gc.dol
-	Chip8			= chip8.dol
-	Pong			= pong.dol
-	Quake			= quake.dol
+	ScummVM		= scummvm-gc.dol
+	Chip8		= chip8.dol
+	Pong		= pong.dol
+	Quake		= quake.dol
 
 	fruit remover	= fruitremover.dol
-	tetris			= tetris.dol
+	tetris		= tetris.dol
 	Ascii Fighter	= af.dol
-	Breakout		= breakout.dol
+	Breakout	= breakout.dol
 
-	Snowlords		= snowlords.dol
-
+	Snowlords	= snowlords.dol
+	SuperMethaneBros= methane.dol
+	MarioBox	= Extra Info
 */
 
 
@@ -768,52 +807,41 @@ void DrawConfirm0(x,y)
 	// DRAW CONFIRMATION BOX 
 	DrawEmptyBox(25,85, vmode->fbWidth-30, 395, COLOR_BLACK);
 	if (x == 25 && y == 85) {
-			DrawImage(TEX_LOGONES, 25+(2.25*116)-57, 125, 185, 145, 0, 0.0f, 1.0f, 0.0f, 1.0f);
+			DrawImage(TEX_LOGONES,  25+(2.25*116)-57, 125, 185, 145, 0, 0.0f, 1.0f, 0.0f, 1.0f);
 			sprintf(EmuName, "fceugx-gc.dol"); }	
 	else if (x == 170 && y == 85) { 
 			DrawImage(TEX_LOGOSNES, 25+(2.25*116)-57, 125, 185, 145, 0, 0.0f, 1.0f, 0.0f, 1.0f);
 			sprintf(EmuName, "snes9xgx-gc.dol"); }
 	else if (x == 315 && y == 85) {
-			DrawImage(TEX_LOGON64, 25+(2.25*116)-57, 125, 185, 145, 0, 0.0f, 1.0f, 0.0f, 1.0f);
+			DrawImage(TEX_LOGON64,  25+(2.25*116)-57, 125, 185, 145, 0, 0.0f, 1.0f, 0.0f, 1.0f);
 			sprintf(EmuName, "cube64.dol"); }
 	else if (x == 460 && y == 85) {
-			DrawImage(TEX_LOGOGBA, 25+(2.25*116)-57, 125, 185, 145, 0, 0.0f, 1.0f, 0.0f, 1.0f); 
+			DrawImage(TEX_LOGOGBA,  25+(2.25*116)-57, 125, 185, 145, 0, 0.0f, 1.0f, 0.0f, 1.0f); 
 			sprintf(EmuName, "vbagx_gc.dol"); }	
 
 
 	else if (x == 25 && y == 185) {
 			DrawImage(TEX_LOGOGENESIS, 25+(2.25*116)-57, 125, 185, 145, 0, 0.0f, 1.0f, 0.0f, 1.0f); 
-			sprintf(EmuName, "genplus_cube.dol"); }			
+			sprintf(EmuName, "genplus_cube.dol"); }
 	else if (x == 170 && y == 185) {
-			DrawImage(TEX_LOGOTGX, 25+(2.25*116)-57, 125, 185, 145, 0, 0.0f, 1.0f, 0.0f, 1.0f);
+			DrawImage(TEX_LOGOTGX,     25+(2.25*116)-57, 125, 185, 145, 0, 0.0f, 1.0f, 0.0f, 1.0f);
 			sprintf(EmuName, "hugo_cube.dol");}
 	else if (x == 315 && y == 185) {
-			DrawImage(TEX_LOGONGCD, 25+(2.25*116)-57, 125, 185, 145, 0, 0.0f, 1.0f, 0.0f, 1.0f);
+			DrawImage(TEX_LOGONGCD,    25+(2.25*116)-57, 125, 185, 145, 0, 0.0f, 1.0f, 0.0f, 1.0f);
 			sprintf(EmuName, "neocdredux.dol"); }
 	else if (x == 460 && y == 185) {
-			DrawImage(TEX_LOGONGP, 25+(2.25*116)-57, 125, 185, 145, 0, 0.0f, 1.0f, 0.0f, 1.0f);
+			DrawImage(TEX_LOGONGP,     25+(2.25*116)-57, 125, 185, 145, 0, 0.0f, 1.0f, 0.0f, 1.0f);
 			sprintf(EmuName, "neopopgc.dol"); }
 
 
-			
 	else if (x == 25 && y == 285) {
-			DrawImage(TEX_LOGOPSX, 25+(2.25*116)-57, 125, 185, 145, 0, 0.0f, 1.0f, 0.0f, 1.0f);
+			DrawImage(TEX_LOGOPSX,     25+(2.25*116)-57, 125, 185, 145, 0, 0.0f, 1.0f, 0.0f, 1.0f);
 			sprintf(EmuName, "cubeSX.dol"); }
-	else if (x == 170 && y == 285) { GCM(); return; }
-	else if (x == 315 && y == 285) { return;}
-	else if (x == 460 && y == 285) {
-				if (easteregg == 0) {
-					DrawMenuLogos0();
-					DrawImage(TEX_LOGOQBOX, 40+(3.75*116), 300, LOGOQBOX_WIDTH,LOGOQBOX_HEIGHT, 0, 0.0f, 1.0f, 0.0f, 1.0f);
-					easteregg = 1;
-					return;
-				}
-				if (easteregg == 1) {
-					readme();
-					easteregg = 0;
-					return; 
-				}
-			}
+	else if (x == 170 && y == 285) {
+	  		DrawImage(TEX_LOGOVECTREX, 25+(2.25*116)-57, 125, 185, 145, 0, 0.0f, 1.0f, 0.0f, 1.0f);
+			sprintf(EmuName, "vecxgc.dol"); }
+	else if (x == 315 && y == 285) { GCM(); return; }
+	else if (x == 460 && y == 285) { return; }
 	else { 	WriteFont(25+(2.25*116)+10,175, "unknown error"); return;}
 
 	
@@ -881,13 +909,31 @@ void DrawConfirm1(x,y)
 			sprintf(EmuName, "breakout.dol"); }
 
 
-			
 	else if (x == 25 && y == 285) {
 			DrawImage(TEX_LOGOSNOW, 25+(2.25*116)-57, 125, 185, 145, 0, 0.0f, 1.0f, 0.0f, 1.0f);
 			sprintf(EmuName, "snowlords.dol"); }
-	else if (x == 170 && y == 285) { return; }
+	else if (x == 170 && y == 285) {
+			DrawImage(TEX_LOGOMETH, 25+(2.25*116)-57, 125, 185, 145, 0, 0.0f, 1.0f, 0.0f, 1.0f);
+			sprintf(EmuName, "methane.dol"); }
 	else if (x == 315 && y == 285) { return; }
-	else if (x == 460 && y == 285) { return; }
+	else if (x == 460 && y == 285) {
+			if (easteregg == 0) {
+				DrawMenuLogos1();
+				DrawImage(TEX_LOGOQBOX, 40+(3.75*116), 300, LOGOQBOX_WIDTH,LOGOQBOX_HEIGHT, 0, 0.0f, 1.0f, 0.0f, 1.0f);
+				easteregg = 1;
+				return;
+			}
+			if (easteregg == 1) {
+				readme();
+				easteregg = 0;
+				return; 
+			}
+		}
+	
+	
+	
+	
+	
 	else { 	WriteFont(25+(2.25*116)+10,175, "unknown error"); return;}
 
 	

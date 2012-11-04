@@ -10,12 +10,13 @@
 #include <unistd.h>
 #include <sys/types.h>
 #include <ogc/machine/processor.h>
+
 #include "aram/sidestep.h"
-#include "main.h"
+#include "dvd.h"
 #include "FrameBufferMagic.h"
 #include "IPLFontWrite.h"
-#include "dvd.h"
-
+#include "main.h"
+#include "wkf.h"
 
 int retDVD;
 
@@ -509,23 +510,32 @@ void DVD_Initialize()
 
 void GCM()
 {
-	DVD_Initialize();
-	dvdDiscTypeInt = gettype_disc();
-
-//	NOTE: if GCM is detected then just kill this program and reboot to load GCM :) 
-	if((dvdDiscTypeInt == GAMECUBE_DISC) || (dvdDiscTypeInt == MULTIDISC_DISC)) {
-		exit(1);
-	}
-	else {
-		dvd_motor_off();
+  	if(__wkfSpiReadId() != 0 && __wkfSpiReadId() != 0xFFFFFFFF) {
+//		DrawFrameStart();
 		DrawImage(TEX_DVDOUT, 25+(1.25*116), 85, 300, 300, 0, 0.0f, 1.0f, 0.0f, 1.0f);
-		WriteFont(25+(2.25*116)+10,125, "DVD");
-		WriteFont(25+(1.75*116)+10,300, "INVALID DISC");
+		WriteFont(25+(1.70*116)+10,125, "WKF DETECTED");
+		WriteFont(25+(1.60*116)+10,300, "Not ISO9660 Disc");
 		DrawFrameFinish();
 		sleep(3);
 	}
-}
+	else {
+		 DVD_Initialize();
+		  dvdDiscTypeInt = gettype_disc();
 
+//		NOTE: if GCM is detected then just kill this program and reboot to load GCM :) 
+		if((dvdDiscTypeInt == GAMECUBE_DISC) || (dvdDiscTypeInt == MULTIDISC_DISC)) {
+			exit(1);
+		}
+		else {
+			dvd_motor_off();
+			DrawImage(TEX_DVDOUT, 25+(1.25*116), 85, 300, 300, 0, 0.0f, 1.0f, 0.0f, 1.0f);
+			WriteFont(25+(2.25*116)+10,125, "DVD");
+			WriteFont(25+(1.75*116)+10,300, "INVALID DISC");
+			DrawFrameFinish();
+			sleep(3);
+		}
+	}
+}
 
 void DVD_ISO9660(char *EmuName)
 {
@@ -534,7 +544,7 @@ void DVD_ISO9660(char *EmuName)
 
 	if(dvdDiscTypeInt != ISO9660_DISC) {
 		dvd_motor_off();
-		DrawFrameStart();
+//		DrawFrameStart();
 		DrawImage(TEX_DVDOUT, 25+(1.25*116), 85, 300, 300, 0, 0.0f, 1.0f, 0.0f, 1.0f);
 		WriteFont(25+(2.25*116)+10,125, "DVD");
 		WriteFont(25+(1.60*116)+10,300, "Not ISO9660 Disc");
@@ -554,12 +564,13 @@ void DVD_ISO9660(char *EmuName)
 			num_entries = dvd_read_directoryentries(offset, size);	
 			if(num_entries <= 0) {
 				retDVD=1;
-				DrawFrameStart();
+//				DrawFrameStart();
 				DrawImage(TEX_DVDIN, 25+(1.25*116), 85, 300, 300, 0, 0.0f, 1.0f, 0.0f, 1.0f);
 				WriteFont(25+(2.25*116)+10,125, "DVD");
 				WriteFont(25+(1.95*116)+10,150, "Searching...");
 				WriteFont(25+(1.73*116)+10,300, "No Data Found");
 				DrawFrameFinish();
+				sleep(3);
 			}
 			else {
 				dir = memalign(32, num_entries * sizeof(file_handle));
@@ -609,7 +620,6 @@ void DVD_ISO9660(char *EmuName)
 							num_entries = dvd_read_directoryentries((dir)[i].fileBase, DVDToc->file[i].size);	
 							if(num_entries <= 0) {
 								megaDVD=1;
-//								return;
 							}								
 							else {
 								dir = memalign(32, num_entries * sizeof(file_handle) );
@@ -631,12 +641,13 @@ void DVD_ISO9660(char *EmuName)
 			// EXIT DVD SEARCH
 			if ( (emusDVD == 1) && (megaDVD == 1) ) { 
 				retDVD=1;
-				DrawFrameStart();
+//				DrawFrameStart();
 				DrawImage(TEX_DVDIN, 25+(1.25*116), 85, 300, 300, 0, 0.0f, 1.0f, 0.0f, 1.0f);
 				WriteFont(25+(2.25*116)+10,125, "DVD");
 				WriteFont(25+(1.95*116)+10,150, "Searching...");
 				WriteFont(25+(1.73*116)+10,300, "DOL Not Found");
-				DrawFrameFinish(); 
+				DrawFrameFinish();
+				sleep(3);
 			}	
 		}
 	
