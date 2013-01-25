@@ -16,7 +16,7 @@
 #include "main.h"
 #include "wkf.h"
 
-#define _VERSION "v1.1"
+#define _VERSION "v1.2"
 
 #define B_NOSELECT 0
 #define B_SELECTED 1
@@ -42,7 +42,7 @@ enum TextureId
 	TEX_BTNZ,
 	TEX_LOGOBORDER,
 //	TEX_LOGOATARI,
-//	TEX_LOGOCOLECO,
+	TEX_LOGOCOLECO,
 	TEX_LOGOGBA,
 	TEX_LOGOGENESIS,
 	TEX_LOGON64,

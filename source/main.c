@@ -365,7 +365,7 @@ int main ()
 	if(!fb) {
 		return -1;
 	}
-	
+	dvd_motor_off();
 
 	while(1) {
 		main_loop();
