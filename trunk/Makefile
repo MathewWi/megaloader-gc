@@ -152,7 +152,8 @@ rar:
 	@cp megaloader.dol MegaLoader
 	@iso/dollz3 megaloader.dol MegaLoader/megaloader-lz.dol -m
 	@iso/dollz3 megaloader.dol MegaLoader/megaloader-lz-viper.dol -m -v
-	@iso/dollz3 megaloader.dol iso/disc/megaloader.dol -m
+#	@iso/dollz3 megaloader.dol iso/disc/megaloader.dol
+	@cp megaloader.dol iso/disc/
 	@iso/mkisofs -R -J -G iso/gbi.hdr -no-emul-boot -b megaloader.dol -o MegaLoader/megaloader.iso iso/disc/
 	@rar a MegaLoader$(VERSION).rar MegaLoader/megaloader.dol MegaLoader/megaloader-lz.dol MegaLoader/megaloader-lz-viper.dol MegaLoader/megaloader.iso
 #---------------------------------------------------------------------------------

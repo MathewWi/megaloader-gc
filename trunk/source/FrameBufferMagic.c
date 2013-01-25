@@ -51,8 +51,8 @@
 #include "logoborder.h"
 //#include "logoatari_tpl.h"
 //#include "logoatari.h"
-//#include "logocoleco_tpl.h"
-//#include "logocoleco.h"
+#include "logocoleco_tpl.h"
+#include "logocoleco.h"
 
 #include "logogba_tpl.h"
 #include "logogba.h"
@@ -148,8 +148,8 @@ GXTexObj logoborderTexObj;
 
 //TPLFile logoatariTPL;
 //GXTexObj logoatariTexObj;
-//TPLFile logocolecoTPL;
-//GXTexObj logocolecoTexObj;
+TPLFile logocolecoTPL;
+GXTexObj logocolecoTexObj;
 
 TPLFile logogbaTPL;
 GXTexObj logogbaTexObj;
@@ -251,8 +251,8 @@ void init_textures()
 	// system logos
 //	TPL_OpenTPLFromMemory(&logoatariTPL, (void *)logoatari_tpl, logoatari_tpl_size);
 //	TPL_GetTexture(&logoatariTPL,logoatari,&logoatariTexObj);
-//	TPL_OpenTPLFromMemory(&logocolecoTPL, (void *)logocoleco_tpl, logocoleco_tpl_size);
-//	TPL_GetTexture(&logocolecoTPL,logocoleco,&logocolecoTexObj);
+	TPL_OpenTPLFromMemory(&logocolecoTPL, (void *)logocoleco_tpl, logocoleco_tpl_size);
+	TPL_GetTexture(&logocolecoTPL,logocoleco,&logocolecoTexObj);
 	TPL_OpenTPLFromMemory(&logogbaTPL, (void *)logogba_tpl, logogba_tpl_size);
 	TPL_GetTexture(&logogbaTPL,logogba,&logogbaTexObj);
 	TPL_OpenTPLFromMemory(&logogenesisTPL, (void *)logogenesis_tpl, logogenesis_tpl_size);
@@ -447,9 +447,9 @@ void DrawImage(int textureId, int x, int y, int width, int height, int depth, fl
 //	case TEX_LOGOATARI:
 //		GX_LoadTexObj(&logoatariTexObj, GX_TEXMAP0);
 //		break;
-//	case TEX_LOGOCOLECO:
-//		GX_LoadTexObj(&logocolecoTexObj, GX_TEXMAP0);
-//		break;
+	case TEX_LOGOCOLECO:
+		GX_LoadTexObj(&logocolecoTexObj, GX_TEXMAP0);
+		break;
 	case TEX_LOGOGBA:
 		GX_LoadTexObj(&logogbaTexObj, GX_TEXMAP0);
 		break;
@@ -700,7 +700,8 @@ void DrawMenuLogos0()
 
 	DrawImage(TEX_LOGOPSX,  40+(0*116),    300, LOGOPSX_WIDTH,LOGOPSX_HEIGHT,   0, 0.0f, 1.0f, 0.0f, 1.0f);
 	DrawImage(TEX_LOGOVECTREX,40+(1.25*116), 300, LOGOVECTREX_WIDTH, LOGOVECTREX_HEIGHT,0, 0.0f, 1.0f, 0.0f, 1.0f);
-	DrawImage(TEX_LOGOGC,	40+(2.50*116), 300, LOGOGC_WIDTH, LOGOGC_HEIGHT,    0, 0.0f, 1.0f, 0.0f, 1.0f);
+	DrawImage(TEX_LOGOCOLECO, 40+(2.50*116), 300, LOGOCOLECO_WIDTH, LOGOCOLECO_HEIGHT,  0, 0.0f, 1.0f, 0.0f, 1.0f);
+	DrawImage(TEX_LOGOGC,	40+(3.75*116), 300, LOGOGC_WIDTH, LOGOGC_HEIGHT,    0, 0.0f, 1.0f, 0.0f, 1.0f);
 //	DrawImage(TEX_Z, 40+(3.75*116), 300, Z_WIDTH, Z_HEIGHT, 0, 0.0f, 1.0f, 0.0f, 1.0f);
 }
 
@@ -761,6 +762,7 @@ Main Window:
 
 	PSX		= cubeSX.dol
 	Vectrex		= vecxgc.dol
+	ColecoVision	= collisionGC.dol
 	GAMECUBE	= GCM
 
 
@@ -840,8 +842,11 @@ void DrawConfirm0(x,y)
 	else if (x == 170 && y == 285) {
 	  		DrawImage(TEX_LOGOVECTREX, 25+(2.25*116)-57, 125, 185, 145, 0, 0.0f, 1.0f, 0.0f, 1.0f);
 			sprintf(EmuName, "vecxgc.dol"); }
-	else if (x == 315 && y == 285) { GCM(); return; }
-	else if (x == 460 && y == 285) { return; }
+	else if (x == 315 && y == 285) {
+	  		DrawImage(TEX_LOGOCOLECO,  25+(2.25*116)-57, 125, 185, 145, 0, 0.0f, 1.0f, 0.0f, 1.0f);
+			sprintf(EmuName, "collisionGC.dol"); }
+	else if (x == 460 && y == 285) { GCM(); return; }
+//	else if (x == 460 && y == 285) { return; }
 	else { 	WriteFont(25+(2.25*116)+10,175, "unknown error"); return;}
 
 	

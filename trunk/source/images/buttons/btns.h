@@ -24,8 +24,8 @@
 //#define LOGOATARI_WIDTH   (115)
 //#define LOGOATARI_HEIGHT  (75)
 
-//#define LOGOCOLECO_WIDTH   (115)
-//#define LOGOCOLECO_HEIGHT  (75)
+#define LOGOCOLECO_WIDTH   (115)
+#define LOGOCOLECO_HEIGHT  (75)
 
 #define LOGOGBA_WIDTH   (115)
 #define LOGOGBA_HEIGHT  (75)
