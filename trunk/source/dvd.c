@@ -490,7 +490,7 @@ int gettype_disc() {
 void DVD_Initialize()
 {
 	DVD_Init ();
-	retDVD = DVD_Mount();				// Remove later, see if it makes a difference
+	retDVD = DVD_Mount();		// Remove later, see if it makes a difference
 	dvd_read_id();
 	
 	if(!is_gamecube()) {
@@ -539,15 +539,20 @@ void GCM()
 
 void DVD_ISO9660(char *EmuName)
 {
+	int retDVD=0;
+	int rootDVD=0;
+	int emusDVD=0;
+	int megaDVD=0;
+  
+
 	DVD_Initialize();
 	dvdDiscTypeInt = gettype_disc();
 
 	if(dvdDiscTypeInt != ISO9660_DISC) {
 		dvd_motor_off();
-//		DrawFrameStart();
 		DrawImage(TEX_DVDOUT, 25+(1.25*116), 85, 300, 300, 0, 0.0f, 1.0f, 0.0f, 1.0f);
 		WriteFont(25+(2.25*116)+10,125, "DVD");
-		WriteFont(25+(1.60*116)+10,300, "Not ISO9660 Disc");
+		WriteFont(25+(1.78*116)+10,300, "Not ISO9660");
 		DrawFrameFinish(); 
 		sleep(3);
 		return;
@@ -555,22 +560,12 @@ void DVD_ISO9660(char *EmuName)
 	else if(dvdDiscTypeInt == ISO9660_DISC) {
 
 		// NOTE: FOR SD SEARCH WE SHOOK THE TREE...NOW FOR DVD SEARCH, WERE GONNA CUT THE DAMN TREE DOWN
-		int retDVD=0;
-		int rootDVD=0;
-		int emusDVD=0;
-		int megaDVD=0;
-		
 		while((retDVD==0)){ 
+			retDVD = 1;
 			num_entries = dvd_read_directoryentries(offset, size);	
 			if(num_entries <= 0) {
-				retDVD=1;
-//				DrawFrameStart();
-				DrawImage(TEX_DVDIN, 25+(1.25*116), 85, 300, 300, 0, 0.0f, 1.0f, 0.0f, 1.0f);
-				WriteFont(25+(2.25*116)+10,125, "DVD");
-				WriteFont(25+(1.95*116)+10,150, "Searching...");
-				WriteFont(25+(1.73*116)+10,300, "No Data Found");
-				DrawFrameFinish();
-				sleep(3);
+				rootDVD = 1;
+				return;
 			}
 			else {
 				dir = memalign(32, num_entries * sizeof(file_handle));
@@ -607,9 +602,9 @@ void DVD_ISO9660(char *EmuName)
 										return;
 									}
 								}
-								emusDVD=1;	
-							}	
-						}
+//								emusDVD=1;
+							}
+						} emusDVD=1;
 					}
 				}
 				//	MEGALOADER DIR
@@ -632,27 +627,28 @@ void DVD_ISO9660(char *EmuName)
 										return;
 									}
 								}
-								megaDVD=1;
+//								megaDVD=1;
 							}	
-						}
+						}  megaDVD=1;
 					}
 				}
 			}
-			// EXIT DVD SEARCH
-			if ( (emusDVD == 1) && (megaDVD == 1) ) { 
-				retDVD=1;
-//				DrawFrameStart();
-				DrawImage(TEX_DVDIN, 25+(1.25*116), 85, 300, 300, 0, 0.0f, 1.0f, 0.0f, 1.0f);
-				WriteFont(25+(2.25*116)+10,125, "DVD");
-				WriteFont(25+(1.95*116)+10,150, "Searching...");
-				WriteFont(25+(1.73*116)+10,300, "DOL Not Found");
-				DrawFrameFinish();
-				sleep(3);
-			}	
+		// EXIT DVD SEARCH
 		}
 	
 	}
+	
 	dvd_motor_off();
-	sleep(3);
+	DrawImage(TEX_DVDIN, 25+(1.25*116), 85, 300, 300, 0, 0.0f, 1.0f, 0.0f, 1.0f);
+	WriteFont(25+(2.25*116)+10,125, "DVD");
+	WriteFont(25+(1.95*116)+10,150, "Searching...");
+	if ( (emusDVD == 1) && (megaDVD == 1) ) { 
+		WriteFont(25+(1.68*116)+10,300, "DOL Not Found");
+	}
+	else if ( (rootDVD = 1) ) {
+		WriteFont(25+(1.68*116)+10,300, "No Data Found");
+	}
+	DrawFrameFinish();
+	sleep(5);
 	return;
 }

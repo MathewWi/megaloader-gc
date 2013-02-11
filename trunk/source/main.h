@@ -12,13 +12,6 @@
 #include <stdio.h>
 #include <ogcsys.h>
 
-//Video Modes (strings)
-#define Prog480Str	"NTSC (480p)"
-#define Prog576Str	"PAL (576p)"
-#define NTSCStr     "NTSC (480i)"
-#define PALStr      "PAL (576i)"
-#define UnkStr      "Unknown"
-
 //Console Version Type Helpers
 #define GC_CPU_VERSION01 0x00083214
 #define GC_CPU_VERSION02 0x00083410
@@ -41,11 +34,10 @@ typedef struct {
 
 /*** 2D Video Globals ***/
 extern GXRModeObj *vmode;	/*** Graphics Mode Object ***/
-extern u32 *xfb[2];			/*** Framebuffers ***/
-extern int whichfb;			/*** Frame buffer toggle ***/
+extern u32 *xfb[2];		/*** Framebuffers ***/
+extern int whichfb;		/*** Frame buffer toggle ***/
 
 extern void __SYS_ReadROM(void *buf,u32 len,u32 offset);
 extern char IPLInfo[256] __attribute__((aligned(32)));
 void RunDOL(char *EmuName);
 #endif
-

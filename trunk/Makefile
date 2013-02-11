@@ -51,7 +51,7 @@ DATA		:=	data
 TEXTURES	:=	source/images \
 				source/images/buttons
 INCLUDES	:= 	include $(SOURCES)
-VERSION = _v1.1
+VERSION = _v1.2
 #---------------------------------------------------------------------------------
 # options for code generation
 #---------------------------------------------------------------------------------
