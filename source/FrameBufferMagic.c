@@ -32,10 +32,6 @@
 #include "dvdout_tpl.h"
 #include "dvdout.h"
 
-#include "btnnohilight_tpl.h"
-#include "btnnohilight.h"
-#include "btnhilight_tpl.h"
-#include "btnhilight.h"
 #include "boxinner_tpl.h"
 #include "boxinner.h"
 #include "boxouter_tpl.h"
@@ -47,6 +43,7 @@
 #include "btnb.h"
 #include "btnz_tpl.h"
 #include "btnz.h"
+
 #include "logoborder_tpl.h"
 #include "logoborder.h"
 //#include "logoatari_tpl.h"
@@ -126,11 +123,6 @@ GXTexObj dvdoutTexObj;
 
 TPLFile backdropTPL;
 GXTexObj backdropTexObj;
-TPLFile btnnohilightTPL;
-GXTexObj btnnohilightTexObj;
-TPLFile btnhilightTPL;
-GXTexObj btnhilightTexObj;
-
 TPLFile boxinnerTPL;
 GXTexObj boxinnerTexObj;
 TPLFile boxouterTPL;
@@ -150,7 +142,6 @@ GXTexObj logoborderTexObj;
 //GXTexObj logoatariTexObj;
 TPLFile logocolecoTPL;
 GXTexObj logocolecoTexObj;
-
 TPLFile logogbaTPL;
 GXTexObj logogbaTexObj;
 TPLFile logogenesisTPL;
@@ -222,11 +213,6 @@ void init_textures()
 	
 	TPL_OpenTPLFromMemory(&backdropTPL, (void *)backdrop_tpl, backdrop_tpl_size);
 	TPL_GetTexture(&backdropTPL,backdrop,&backdropTexObj);
-	TPL_OpenTPLFromMemory(&btnnohilightTPL, (void *)btnnohilight_tpl, btnnohilight_tpl_size);
-	TPL_GetTexture(&btnnohilightTPL,btnnohilight,&btnnohilightTexObj);
-	TPL_OpenTPLFromMemory(&btnhilightTPL, (void *)btnhilight_tpl, btnhilight_tpl_size);
-	TPL_GetTexture(&btnhilightTPL,btnhilight,&btnhilightTexObj);
-
 	TPL_OpenTPLFromMemory(&boxinnerTPL, (void *)boxinner_tpl, boxinner_tpl_size);
 	TPL_GetTexture(&boxinnerTPL,boxinner,&boxinnerTexObj);
 	GX_InitTexObjWrapMode(&boxinnerTexObj, GX_CLAMP, GX_CLAMP);
@@ -241,8 +227,6 @@ void init_textures()
 	TPL_GetTexture(&btnbTPL,btnb,&btnbTexObj);
 	TPL_OpenTPLFromMemory(&btnzTPL, (void *)btnz_tpl, btnz_tpl_size);
 	TPL_GetTexture(&btnzTPL,btnz,&btnzTexObj);
-	
-	
 	TPL_OpenTPLFromMemory(&logoborderTPL, (void *)logoborder_tpl, logoborder_tpl_size);
 	TPL_GetTexture(&logoborderTPL,logoborder,&logoborderTexObj);	
 	
@@ -423,13 +407,6 @@ void DrawImage(int textureId, int x, int y, int width, int height, int depth, fl
 	case TEX_BANNER:
 		GX_LoadTexObj(&bannerTexObj, GX_TEXMAP0);
 		break;
-	case TEX_BTNNOHILIGHT:
-		GX_LoadTexObj(&btnnohilightTexObj, GX_TEXMAP0);
-		break;
-	case TEX_BTNHILIGHT:
-		GX_LoadTexObj(&btnhilightTexObj, GX_TEXMAP0);
-		break;
-
 	case TEX_BTNA:
 		GX_LoadTexObj(&btnaTexObj, GX_TEXMAP0);
 		break;
@@ -439,7 +416,6 @@ void DrawImage(int textureId, int x, int y, int width, int height, int depth, fl
 	case TEX_BTNZ:
 		GX_LoadTexObj(&btnzTexObj, GX_TEXMAP0);
 		break;
-
 	case TEX_LOGOBORDER:
 		GX_LoadTexObj(&logoborderTexObj, GX_TEXMAP0);
 		break;
@@ -520,8 +496,7 @@ void DrawImage(int textureId, int x, int y, int width, int height, int depth, fl
 	case TEX_LOGOQBOX:
 		GX_LoadTexObj(&logoqboxTexObj, GX_TEXMAP0);
 		break;
-
-	}	
+	}
 
 	GX_Begin(GX_QUADS, GX_VTXFMT0, 4);
 		GX_Position3f32((float) x,(float) y,(float) depth );
@@ -542,7 +517,9 @@ void DrawImage(int textureId, int x, int y, int width, int height, int depth, fl
 void _DrawBackdrop() 
 {
 	DrawImage(TEX_BACKDROP, 0, 0, 640, 480, 0, 0.0f, 1.0f, 0.0f, 1.0f);
-	WriteFont(30,40, "MegaLoader");
+	char title[1];
+	sprintf(title, "MegaLoader %s", _VERSION);
+	WriteFont(30,40, title);
 }
 
 // Call this when starting a screen
@@ -562,62 +539,6 @@ void DrawFrameFinish() {
 	VIDEO_Flush();
  	VIDEO_WaitVSync();
 	if(vmode->viTVMode&VI_NON_INTERLACE) VIDEO_WaitVSync();
-}
-
-void DrawMessageBox(int type, char *message) 
-{
-	int x1 = ((640/2) - (PROGRESS_BOX_WIDTH/2));
-	int x2 = ((640/2) + (PROGRESS_BOX_WIDTH/2));
-	int y1 = ((480/2) - (PROGRESS_BOX_HEIGHT/2));
-	int y2 = ((480/2) + (PROGRESS_BOX_HEIGHT/2));
-	int middleY = y2-y1 < 23 ? y1+3 : (y2+y1)/2-12;
-	
-  	GXColor fillColor = (GXColor) {0,0,0,GUI_MSGBOX_ALPHA}; //black
-	GXColor borderColor = (GXColor) {200,200,200,GUI_MSGBOX_ALPHA}; //silver
-	
-	DrawSimpleBox( x1, y1, x2-x1, y2-y1, 0, fillColor, borderColor); 
-
-	char *tok = strtok(message,"\n");
-	while(tok != NULL) {
-		WriteFontStyled(640/2, middleY, tok, 1.0f, true, defaultColor);
-		tok = strtok(NULL,"\n");
-		middleY+=24;
-	}
-}
-
-void DrawRawFont(int x, int y, char *message) {
-  WriteFont(x, y, message);
-}
-
-void DrawSelectableButton(int x1, int y1, int x2, int y2, char *message, int mode, u32 color) 
-{
-	int middleY, borderSize;
-	color = (color == -1) ? BUTTON_COLOUR_INNER : color; //never used
-
-	borderSize = (mode==B_SELECTED) ? 6 : 4;
-	middleY = (((y2-y1)/2)-12)+y1;
-
-	//determine length of the text ourselves if x2 == -1
-	x1 = (x2 == -1) ? x1+2:x1;
-	x2 = (x2 == -1) ? GetTextSizeInPixels(message)+x1+(borderSize*2)+6 : x2;
-
-	if(middleY+24 > y2) {
-		middleY = y1+3;
-	}
-
-	GXColor selectColor = (GXColor) {96,107,164,GUI_MSGBOX_ALPHA}; //bluish
-	GXColor noColor = (GXColor) {0,0,0,0}; //black
-	GXColor borderColor = (GXColor) {200,200,200,GUI_MSGBOX_ALPHA}; //silver
-	
-	//Draw Text and backfill (if selected)
-	if(mode==B_SELECTED) {
-		DrawSimpleBox( x1, y1, x2-x1, y2-y1, 0, selectColor, borderColor);
-		WriteFontStyled(x1 + borderSize+3, middleY, message, 1.0f, false, defaultColor);
-	}
-	else {
-		DrawSimpleBox( x1, y1, x2-x1, y2-y1, 0, noColor, borderColor);
-		WriteFontStyled(x1 + borderSize+3, middleY, message, 1.0f, false, defaultColor);
-	}
 }
 
 void DrawEmptyBox(int x1, int y1, int x2, int y2, int color) 
@@ -657,7 +578,7 @@ void readme()
 	sleep(20);
 }
 
-
+extern int curMenu;
 
 //###############################################################################
 
@@ -685,9 +606,9 @@ void DrawMenuSelector(x,y)
 }
 
 
-void DrawMenuLogos0() 
+void DrawMenuLogos() 
 {
-	//DRAW ICONS
+   if (curMenu==0){     //DRAW ICONS
 	DrawImage(TEX_LOGONES,  40+(0*116),    100, LOGONES_WIDTH,LOGONES_HEIGHT,   0, 0.0f, 1.0f, 0.0f, 1.0f);
 	DrawImage(TEX_LOGOSNES, 40+(1.25*116), 100, LOGOSNES_WIDTH,LOGOSNES_HEIGHT, 0, 0.0f, 1.0f, 0.0f, 1.0f);
 	DrawImage(TEX_LOGON64,  40+(2.5*116),  100, LOGON64_WIDTH,LOGON64_HEIGHT,   0, 0.0f, 1.0f, 0.0f, 1.0f);
@@ -703,12 +624,8 @@ void DrawMenuLogos0()
 	DrawImage(TEX_LOGOCOLECO, 40+(2.50*116), 300, LOGOCOLECO_WIDTH, LOGOCOLECO_HEIGHT,  0, 0.0f, 1.0f, 0.0f, 1.0f);
 	DrawImage(TEX_LOGOGC,	40+(3.75*116), 300, LOGOGC_WIDTH, LOGOGC_HEIGHT,    0, 0.0f, 1.0f, 0.0f, 1.0f);
 //	DrawImage(TEX_Z, 40+(3.75*116), 300, Z_WIDTH, Z_HEIGHT, 0, 0.0f, 1.0f, 0.0f, 1.0f);
-}
-
-
-void DrawMenuLogos1() 
-{
-	//DRAW ICONS
+   }
+   if (curMenu==1){      //DRAW ICONS
 	DrawImage(TEX_LOGOSCUMMVM, 40+(0*116), 100, LOGOSCUMMVM_WIDTH,LOGOSCUMMVM_HEIGHT, 0, 0.0f, 1.0f, 0.0f, 1.0f);
 	DrawImage(TEX_LOGOCHIP8, 40+(1.25*116),100, LOGOCHIP8_WIDTH,LOGOCHIP8_HEIGHT,0, 0.0f, 1.0f, 0.0f, 1.0f);
 	DrawImage(TEX_LOGOPONG,  40+(2.5*116), 100, LOGOPONG_WIDTH,LOGOPONG_HEIGHT,  0, 0.0f, 1.0f, 0.0f, 1.0f);
@@ -724,19 +641,17 @@ void DrawMenuLogos1()
 //	DrawImage(TEX_Y, 40+(2.50*116), 300, Y_WIDTH, Y_HEIGHT, 0, 0.0f, 1.0f, 0.0f, 1.0f);
 	if (easteregg == 1) 
 		DrawImage(TEX_LOGOQBOX, 40+(3.75*116), 300, LOGOQBOX_WIDTH,LOGOQBOX_HEIGHT, 0, 0.0f, 1.0f, 0.0f, 1.0f);
+   }
 }
-
 
 // MAIN MENU BUTTONS
 void DrawMenuButtons() 
 {
-
-	// DRAW BUTTONS
 	DrawImage(TEX_BTNA, 40+(0*116), 420, BTNA_WIDTH,BTNA_HEIGHT, 0, 0.0f, 1.0f, 0.0f, 1.0f);
 	DrawImage(TEX_BTNZ, 40+(4*116), 420, BTNZ_WIDTH,BTNZ_HEIGHT, 0, 0.0f, 1.0f, 0.0f, 1.0f);
 
 	WriteFont(110,430, "SELECT");
-	WriteFont(400,430, "SWISS");	
+	WriteFont(400,430, "SWISS");
 }
 
 
@@ -744,7 +659,7 @@ void DrawMenuButtons()
 NOTE: SEARCH FOR THE FOLLOWING EMULATOR TITLES:
 ----------------------------------------------
 NA:
-	Atari			= :(
+	Atari		= :(
 	ColecoVision	= :(
 	Intellivision	= :(
 
@@ -787,26 +702,24 @@ Second Window:
 
 
 
-void DrawConfirm0(x,y)
+void DrawConfirm(x,y)
 {
+  char EmuName[10];
 
-	char EmuName[10];
+  // REFRESH BACKDROP TO HIDE MAIN MENU BUTTONS
+  DrawFrameStart();
+  DrawMenuLogos();
+  DrawMenuSelector(x,y);
 
-	// REFRESH BACKDROP TO HIDE MAIN MENU BUTTONS
-	DrawFrameStart();
-	DrawMenuLogos0(); 
-	DrawMenuSelector(x,y);
+//	NOT USED	
+//	DrawImage(TEX_LOGOATARI, 25+(2.50*116)-57, 147, LOGOATARI_WIDTH,LOGOATARI_HEIGHT, 0, 0.0f, 1.0f, 0.0f, 1.0f); 
+//	sprintf(EmuName, "atari"); }
+//	DrawImage(TEX_LOGOCOLECO, 25+(2.50*116)-57, 147, LOGOCOLECO_WIDTH,LOGOCOLECO_HEIGHT, 0, 0.0f, 1.0f, 0.0f, 1.0f); 
+//	sprintf(EmuName, "coleco"); }
+//	sprintf(EmuName, "Please make another selection");
+//	WriteFont(25+(1*116)+10,175, EmuName);}
 
-//			NOT USED	
-//			DrawImage(TEX_LOGOATARI, 25+(2.50*116)-57, 147, LOGOATARI_WIDTH,LOGOATARI_HEIGHT, 0, 0.0f, 1.0f, 0.0f, 1.0f); 
-//			sprintf(EmuName, "atari"); }
-//			DrawImage(TEX_LOGOCOLECO, 25+(2.50*116)-57, 147, LOGOCOLECO_WIDTH,LOGOCOLECO_HEIGHT, 0, 0.0f, 1.0f, 0.0f, 1.0f); 
-//			sprintf(EmuName, "coleco"); }
-//			sprintf(EmuName, "Please make another selection");
-//			WriteFont(25+(1*116)+10,175, EmuName);}
-	
-	
-	// DRAW CONFIRMATION BOX 
+  if (curMenu==0){     // DRAW CONFIRMATION BOX 0
 	DrawEmptyBox(25,85, vmode->fbWidth-30, 395, COLOR_BLACK);
 	if (x == 25 && y == 85) {
 			DrawImage(TEX_LOGONES,  25+(2.25*116)-57, 125, 185, 145, 0, 0.0f, 1.0f, 0.0f, 1.0f);
@@ -821,7 +734,6 @@ void DrawConfirm0(x,y)
 			DrawImage(TEX_LOGOGBA,  25+(2.25*116)-57, 125, 185, 145, 0, 0.0f, 1.0f, 0.0f, 1.0f); 
 			sprintf(EmuName, "vbagx_gc.dol"); }	
 
-
 	else if (x == 25 && y == 185) {
 			DrawImage(TEX_LOGOGENESIS, 25+(2.25*116)-57, 125, 185, 145, 0, 0.0f, 1.0f, 0.0f, 1.0f); 
 			sprintf(EmuName, "genplus_cube.dol"); }
@@ -834,7 +746,6 @@ void DrawConfirm0(x,y)
 	else if (x == 460 && y == 185) {
 			DrawImage(TEX_LOGONGP,     25+(2.25*116)-57, 125, 185, 145, 0, 0.0f, 1.0f, 0.0f, 1.0f);
 			sprintf(EmuName, "neopopgc.dol"); }
-
 
 	else if (x == 25 && y == 285) {
 			DrawImage(TEX_LOGOPSX,     25+(2.25*116)-57, 125, 185, 145, 0, 0.0f, 1.0f, 0.0f, 1.0f);
@@ -849,42 +760,9 @@ void DrawConfirm0(x,y)
 //	else if (x == 460 && y == 285) { return; }
 	else { 	WriteFont(25+(2.25*116)+10,175, "unknown error"); return;}
 
-	
-	DrawImage(TEX_BTNB, 25+(1.25*116)-50, 315, BTNB_WIDTH,BTNB_HEIGHT, 0, 0.0f, 1.0f, 0.0f, 1.0f);
-	WriteFont(25+(1.25*116)+10,325, "CANCEL");
-	DrawImage(TEX_BTNA, 25+(3.75*116), 315, BTNA_WIDTH,BTNA_HEIGHT, 0, 0.0f, 1.0f, 0.0f, 1.0f);
-	WriteFont(25+(3.75*116)-75,325, "LOAD");
-	
-//	WriteFont(275,40, "Confirm");
-	DrawFrameFinish();
+   }
 
-	while(1){
-		//CONFIRM A = EXECUTE DOL	
-		while (PAD_ButtonsDown(0) & PAD_BUTTON_A) {
-			RunDOL(EmuName);
-			return;								//
-		}
-		// CANCEL B = EXIT CONFIRMATION MENU
-		while (PAD_ButtonsDown(0) & PAD_BUTTON_B) { // do nothing, just return
-			return;
-		}
-
-	}
-
-}
-
-void DrawConfirm1(x,y)
-{
-
-	char EmuName[10];
-
-	// REFRESH BACKDROP TO HIDE MAIN MENU BUTTONS
-	DrawFrameStart();
-	DrawMenuLogos1(); 
-	DrawMenuSelector(x,y);
-
-	
-	// DRAW CONFIRMATION BOX 
+   if (curMenu==1){    // DRAW CONFIRMATION BOX 1
 	DrawEmptyBox(25,85, vmode->fbWidth-30, 395, COLOR_BLACK);
 	if (x == 25 && y == 85) {
 			DrawImage(TEX_LOGOSCUMMVM, 25+(2.25*116)-57, 125, 185, 145, 0, 0.0f, 1.0f, 0.0f, 1.0f);
@@ -899,7 +777,6 @@ void DrawConfirm1(x,y)
 			DrawImage(TEX_LOGOQUAKE, 25+(2.25*116)-57, 125, 185, 145, 0, 0.0f, 1.0f, 0.0f, 1.0f); 
 			sprintf(EmuName, "quake.dol"); }	
 
-
 	else if (x == 25 && y == 185) {
 			DrawImage(TEX_LOGOFRUIT, 25+(2.25*116)-57, 125, 185, 145, 0, 0.0f, 1.0f, 0.0f, 1.0f); 
 			sprintf(EmuName, "fruitremover.dol"); }			
@@ -913,7 +790,6 @@ void DrawConfirm1(x,y)
 			DrawImage(TEX_LOGOBREAK, 25+(2.25*116)-57, 125, 185, 145, 0, 0.0f, 1.0f, 0.0f, 1.0f);
 			sprintf(EmuName, "breakout.dol"); }
 
-
 	else if (x == 25 && y == 285) {
 			DrawImage(TEX_LOGOSNOW, 25+(2.25*116)-57, 125, 185, 145, 0, 0.0f, 1.0f, 0.0f, 1.0f);
 			sprintf(EmuName, "snowlords.dol"); }
@@ -923,7 +799,7 @@ void DrawConfirm1(x,y)
 	else if (x == 315 && y == 285) { return; }
 	else if (x == 460 && y == 285) {
 			if (easteregg == 0) {
-				DrawMenuLogos1();
+				DrawMenuLogos();
 				DrawImage(TEX_LOGOQBOX, 40+(3.75*116), 300, LOGOQBOX_WIDTH,LOGOQBOX_HEIGHT, 0, 0.0f, 1.0f, 0.0f, 1.0f);
 				easteregg = 1;
 				return;
@@ -934,13 +810,8 @@ void DrawConfirm1(x,y)
 				return; 
 			}
 		}
-	
-	
-	
-	
-	
 	else { 	WriteFont(25+(2.25*116)+10,175, "unknown error"); return;}
-
+   }
 	
 	DrawImage(TEX_BTNB, 25+(1.25*116)-50, 315, BTNB_WIDTH,BTNB_HEIGHT, 0, 0.0f, 1.0f, 0.0f, 1.0f);
 	WriteFont(25+(1.25*116)+10,325, "CANCEL");
@@ -954,7 +825,7 @@ void DrawConfirm1(x,y)
 		//CONFIRM A = EXECUTE DOL	
 		while (PAD_ButtonsDown(0) & PAD_BUTTON_A) {
 			RunDOL(EmuName);
-			return;								//
+			return;
 		}
 		// CANCEL B = EXIT CONFIRMATION MENU
 		while (PAD_ButtonsDown(0) & PAD_BUTTON_B) { // do nothing, just return

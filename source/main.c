@@ -24,14 +24,11 @@
 #include "main.h"
 #include "wkf.h"
 
+#define DEFAULT_FIFO_SIZE    (256*1024)                 //(64*1024) minimum
 
-
-#define DEFAULT_FIFO_SIZE    (256*1024)					//(64*1024) minimum
-	
-GXRModeObj *vmode = NULL;								//Graphics Mode Object
-u32 *xfb[2] = { NULL, NULL };							//Framebuffers
-int whichfb = 0;										//Frame buffer toggle
-char *videoStr = NULL;
+GXRModeObj *vmode = NULL;                               //Graphics Mode Object
+u32 *xfb[2] = { NULL, NULL };                           //Framebuffers
+int whichfb = 0;                                        //Frame buffer toggle
 
 FILE *fp;
 char EmuName[10];
@@ -49,77 +46,51 @@ const DISC_INTERFACE*  dvd1 = &__io_gcdvd;
 char IPLInfo[256] __attribute__((aligned(32)));
 
 
-static void ProperScanPADS()	{ 
+static void ProperScanPADS() { 
 	PAD_ScanPads(); 
 }
 
-void doBackdrop0()
+void doBackdrop()
 {
 	DrawFrameStart();
-	DrawMenuLogos0() ;
+	DrawMenuLogos();
 	DrawMenuButtons();
-}
-
-void doBackdrop1()
-{
-	DrawFrameStart();
-	DrawMenuLogos1() ;
-	DrawMenuButtons();
-}
-
-void populateVideoStr(GXRModeObj *vmode) {
-	if(vmode == &TVPal576ProgScale) {
-		videoStr = Prog576Str;
-	}
-	else if(vmode == &TVNtsc480Prog) {
-		videoStr = Prog480Str;
-	}
-	else if(vmode == &TVPal576IntDfScale) {
-		videoStr = PALStr;
-	}
-	else if(vmode == &TVNtsc480IntDf) {
-		videoStr = NTSCStr;
-	}
-	else {
-		videoStr = UnkStr;
-	}
 }
 
 /* Initialise Video, PAD, Font */
 void* Initialise (void)
 {
 	VIDEO_Init ();
-	PAD_Init (); 
-	
-	__SYS_ReadROM(IPLInfo,256,0);						// Read IPL tag
+	PAD_Init ();
+	PAD_ScanPads();
+	 __SYS_ReadROM(IPLInfo,256,0);                          // Read IPL tag
 
 	// Wii has no IPL tags for "PAL" so let libOGC figure out the video mode
 	if(!is_gamecube()) {
-		vmode = VIDEO_GetPreferredMode(NULL); 			//Last mode used
+		vmode = VIDEO_GetPreferredMode(NULL);           //Last mode used
 	}
 	else {	// Gamecube, determine based on IPL
-		if(VIDEO_HaveComponentCable()) {
+		if(VIDEO_HaveComponentCable() && !(PAD_ButtonsDown(0) & PAD_TRIGGER_L)) {
 			if((strstr(IPLInfo,"PAL")!=NULL)) {
-				vmode = &TVPal576ProgScale; 			//Progressive 576p
+				vmode = &TVPal576ProgScale;     //Progressive 576p
 			}
 			else {
-				vmode = &TVNtsc480Prog; 				//Progressive 480p
+				vmode = &TVNtsc480Prog;         //Progressive 480p
 			}
 		}
 		else {
 			//try to use the IPL region
 			if(strstr(IPLInfo,"PAL")!=NULL) {
-				vmode = &TVPal576IntDfScale;         	//PAL
+				vmode = &TVPal576IntDfScale;    //PAL
 			}
 			else if(strstr(IPLInfo,"NTSC")!=NULL) {
-				vmode = &TVNtsc480IntDf;        		//NTSC
+				vmode = &TVNtsc480IntDf;        //NTSC
 			}
 			else {
-				vmode = VIDEO_GetPreferredMode(NULL); 	//Last mode used
+				vmode = VIDEO_GetPreferredMode(NULL);  //Last mode used
 			}
 		}
 	}
-	populateVideoStr(vmode);
 
 	VIDEO_Configure (vmode);
 	xfb[0] = (u32 *) MEM_K0_TO_K1 (SYS_AllocateFramebuffer (vmode));
@@ -134,7 +105,7 @@ void* Initialise (void)
 	if (vmode->viTVMode & VI_NON_INTERLACE) {
 		VIDEO_WaitVSync ();
 	}
-	
+
 	// setup the fifo and then init GX
 	void *gp_fifo = NULL;
 	gp_fifo = MEM_K0_TO_K1 (memalign (32, DEFAULT_FIFO_SIZE));
@@ -154,10 +125,8 @@ void* Initialise (void)
 	init_font();
 	init_textures();
 	whichfb = 0;
-	
 	return xfb[0];
 }
-
 
 void RunDOL(char *EmuName) 
 {
@@ -240,7 +209,7 @@ void RunDOL(char *EmuName)
 				}
 				else { sprintf(Found,"Found %s",RunEmu); WriteFont(25+(0.75*116)+10,425, Found); DrawFrameFinish(); }
 			}
-			else {	sprintf(Found,"Found %s",RunEmu); WriteFont(25+(0*116)+10,125, Found); DrawFrameFinish(); }
+			else {	sprintf(Found,"Found %s",RunEmu); WriteFont(25+(0*116)+10,425, Found); DrawFrameFinish(); }
 		}
 	
 //		IF fp EXISTS THEN TRY DOLtoARAM
@@ -285,25 +254,16 @@ void main_loop()
 { 
 	//MAIN MENU
 	VIDEO_WaitVSync();
-	PAD_ScanPads();
-
-	// DISPLAY MENU BASED ON curMenu
-	if (curMenu == 0) {
-		doBackdrop0();
-		DrawMenuSelector(x,y);
-		DrawFrameFinish(); 
-	}
-	if (curMenu == 1) {
-		doBackdrop1(); 
-		DrawMenuSelector(x,y);
-		DrawFrameFinish(); 
-	}
+	doBackdrop();
+	DrawMenuSelector(x,y);
+	DrawFrameFinish(); 
 	
 	while(1){
 		// SWAP MENU
 		if (PAD_ButtonsDown(0) & PAD_TRIGGER_R) {
-			if (curMenu == 0) { curMenu = 1; return; }
-			if (curMenu == 1) { curMenu = 0; return; }
+//			if (curMenu == 0) { curMenu = 1; return; }
+//			if (curMenu == 1) { curMenu = 0; return; }
+		 curMenu ^= 1; return;	  
 		}
 
 		//EXIT
@@ -317,41 +277,27 @@ void main_loop()
 			RunDOL(EmuName);
 		}
 		
-		//MENU SELECTOR MENU 0
-		if ((PAD_ButtonsDown(0) & PAD_BUTTON_LEFT) && curMenu == 0) { 	
-			if (x <= 460 && x > 25) { x = x - 145; } doBackdrop0(); DrawMenuSelector(x,y); DrawFrameFinish();
+		//MENU SELECTOR MENU
+		if ((PAD_ButtonsDown(0) & PAD_BUTTON_LEFT)) {
+			if (x <= 460 && x > 25) { x = x - 145; } doBackdrop(); DrawMenuSelector(x,y); DrawFrameFinish();
 		}
-		if ((PAD_ButtonsDown(0) & PAD_BUTTON_RIGHT) && curMenu == 0)  { 	
-			if (x >= 25 && x < 460) { x = x + 145; } doBackdrop0(); DrawMenuSelector(x,y); DrawFrameFinish();
+		if ((PAD_ButtonsDown(0) & PAD_BUTTON_RIGHT)) {
+			if (x >= 25 && x < 460) { x = x + 145; } doBackdrop(); DrawMenuSelector(x,y); DrawFrameFinish();
 		}
-		if ((PAD_ButtonsDown(0) & PAD_BUTTON_UP) && curMenu == 0)  { 	
-			if (y > 85 && y <= 285) { y = y - 100; } doBackdrop0(); DrawMenuSelector(x,y); DrawFrameFinish();
+		if ((PAD_ButtonsDown(0) & PAD_BUTTON_UP)) {
+			if (y > 85 && y <= 285) { y = y - 100; } doBackdrop(); DrawMenuSelector(x,y); DrawFrameFinish();
 		}
-		if ((PAD_ButtonsDown(0) & PAD_BUTTON_DOWN) && curMenu == 0)  { 
-			if (y < 285 && y >= 85) { y = y + 100; } doBackdrop0(); DrawMenuSelector(x,y); DrawFrameFinish();
+		if ((PAD_ButtonsDown(0) & PAD_BUTTON_DOWN)) {
+			if (y < 285 && y >= 85) { y = y + 100; } doBackdrop(); DrawMenuSelector(x,y); DrawFrameFinish();
+		}
 
-		}
-		//MENU SELECTOR MENU 1
-		if ((PAD_ButtonsDown(0) & PAD_BUTTON_LEFT) && curMenu == 1) { 	
-			if (x <= 460 && x > 25) { x = x - 145; } doBackdrop1(); DrawMenuSelector(x,y); DrawFrameFinish();
-		}
-		if ((PAD_ButtonsDown(0) & PAD_BUTTON_RIGHT) && curMenu == 1)  { 	
-			if (x >= 25 && x < 460) { x = x + 145; } doBackdrop1(); DrawMenuSelector(x,y); DrawFrameFinish();
-		}
-		if ((PAD_ButtonsDown(0) & PAD_BUTTON_UP) && curMenu == 1)  { 	
-			if (y > 85 && y <= 285) { y = y - 100; } doBackdrop1(); DrawMenuSelector(x,y); DrawFrameFinish();
-		}
-		if ((PAD_ButtonsDown(0) & PAD_BUTTON_DOWN) && curMenu == 1)  { 
-			if (y < 285 && y >= 85) { y = y + 100; } doBackdrop1(); DrawMenuSelector(x,y); DrawFrameFinish();
-
-		}
 		//ENTER CONFIRMATION MENU 0 OR MENU 1
 		if (PAD_ButtonsDown(0) & PAD_BUTTON_A) {
-			if (curMenu == 0) { DrawConfirm0(x,y); return; }
-			if (curMenu == 1) { DrawConfirm1(x,y); return; }
+                        DrawConfirm(x,y);
+			return;
 		}
 	}
-}	
+}
 
 
 /****************************************************************************
@@ -360,7 +306,7 @@ void main_loop()
 int main () 
 {
 	void *fb;
-	
+
 	fb = Initialise();
 	if(!fb) {
 		return -1;

@@ -16,7 +16,7 @@
 #include "main.h"
 #include "wkf.h"
 
-#define _VERSION "v1.2"
+#define _VERSION "v1.3"
 
 #define B_NOSELECT 0
 #define B_SELECTED 1
@@ -35,8 +35,6 @@ enum TextureId
 	TEX_DVDIN,
 	TEX_DVDOUT,	
 	TEX_BANNER,
-	TEX_BTNNOHILIGHT,
-	TEX_BTNHILIGHT,
 	TEX_BTNA,
 	TEX_BTNB,
 	TEX_BTNZ,
@@ -77,17 +75,11 @@ void init_textures();
 void DrawImage(int textureId, int x, int y, int width, int height, int depth, float s1, float s2, float t1, float t2);
 void DrawFrameStart();
 void DrawFrameFinish();
-void DrawMessageBox(int type, char *message);
-void DrawRawFont(int x, int y, char *message);
-void DrawSelectableButton(int x1, int y1, int x2, int y2, char *message, int mode, u32 color);
 void DrawEmptyBox(int x1, int y1, int x2, int y2, int color);
 
 void DrawMenuSelector(int x, int y);
-void DrawMenuLogos0();
-void DrawMenuLogos1();
-void DrawDevices();
+void DrawMenuLogos();
 void DrawMenuButtons();
-void DrawConfirm0(int x, int y);
-void DrawConfirm1(int x, int y);
+void DrawConfirm(int x, int y);
 
 #endif
