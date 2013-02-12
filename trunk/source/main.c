@@ -62,14 +62,17 @@ void* Initialise (void)
 {
 	VIDEO_Init ();
 	PAD_Init ();
-	PAD_ScanPads();
+	while(ret <= 0) { ret = PAD_ScanPads(); usleep(100); }
+	 
 	 __SYS_ReadROM(IPLInfo,256,0);                          // Read IPL tag
-
+	 
 	// Wii has no IPL tags for "PAL" so let libOGC figure out the video mode
 	if(!is_gamecube()) {
 		vmode = VIDEO_GetPreferredMode(NULL);           //Last mode used
 	}
 	else {	// Gamecube, determine based on IPL
+                // If Trigger L detected during bootup, force 480i safemode
+                // for Digital Component cable for SDTV compatibility.
 		if(VIDEO_HaveComponentCable() && !(PAD_ButtonsDown(0) & PAD_TRIGGER_L)) {
 			if((strstr(IPLInfo,"PAL")!=NULL)) {
 				vmode = &TVPal576ProgScale;     //Progressive 576p

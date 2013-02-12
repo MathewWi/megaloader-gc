@@ -23,10 +23,6 @@
 #include <sdcard/gcsd.h>
 //#include "frag.h"
 
-
-
-
-
 #include "aram/sidestep.h"
 #include "FrameBufferMagic.h"
 #include "IPLFontWrite.h"
@@ -40,6 +36,7 @@ static int wkfInitialized = 0;
 static volatile unsigned int* const wkf = (unsigned int*)0xCC006000;
 static volatile unsigned int* const pireg = (unsigned int*)0xCC003000;
 
+extern u8 udelay();
 
 file_handle initial_WKF =
 	{ "wkf:/",       // directory
@@ -50,8 +47,6 @@ file_handle initial_WKF =
 	  0,
 	  0
 	};
-
-
 
 void __wkfReset() {
 	u32 val;
@@ -85,8 +80,6 @@ unsigned char __wkfSpiReadUC(unsigned int addr) {
 	u32 ret = __wkfCmdImm(0xDF000000, 0x3C000300 | ((addr>>16)&0xFF), (((addr>>8)&0xFF) << 24) | (((addr)&0xFF)<<16));
 	return (u8)(ret&0xFF);
 }
-
-
 
 // Reads DVD sectors (returns 0 on success)
 void __wkfReadSectors(void* dst, unsigned int len, u64 offset) {

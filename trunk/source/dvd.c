@@ -39,7 +39,6 @@ volatile unsigned long* dvd = (volatile unsigned long*)0xCC006000;
 char IPLInfo[256] __attribute__((aligned(32)));
 
 
-
 int dvd_read_id()
 {
 	dvd[0] = 0x2E;
