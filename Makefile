@@ -51,7 +51,7 @@ DATA		:=	data
 TEXTURES	:=	source/images \
 				source/images/buttons
 INCLUDES	:= 	include $(SOURCES)
-VERSION = _v1.2
+#VERSION = _v1.3
 #---------------------------------------------------------------------------------
 # options for code generation
 #---------------------------------------------------------------------------------
@@ -138,25 +138,36 @@ $(BUILD):
 #---------------------------------------------------------------------------------
 clean:
 	@echo clean ...
-	@rm -fr $(BUILD) $(OUTPUT).elf $(OUTPUT).dol
-
-#---------------------------------------------------------------------------------
-clean-all:
-	@echo clean ...
-	@rm -fr $(BUILD) $(OUTPUT).elf $(OUTPUT).dol MegaLoader MegaLoader*.rar iso/disc/megaloader.dol
+	@rm -fr $(BUILD) $(OUTPUT).elf $(OUTPUT).dol MegaLoader MegaLoader*.rar megaloader_homebrew.iso
 
 #---------------------------------------------------------------------------------
 rar:
-	@rm -rf MegaLoader MegaLoader*.rar iso/disc/megaloader.dol
+## to make distribution package...
+## usage "make rar VERSION=x.x"
+	@rm -rf MegaLoader MegaLoader*.rar iso/disc_temp/
 	@mkdir MegaLoader
+	@mkdir iso/disc_temp/
 	@cp megaloader.dol MegaLoader
 	@iso/dollz3 megaloader.dol MegaLoader/megaloader-lz.dol -m
 	@iso/dollz3 megaloader.dol MegaLoader/megaloader-lz-viper.dol -m -v
-#	@iso/dollz3 megaloader.dol iso/disc/megaloader.dol
-	@cp megaloader.dol iso/disc/
-	@iso/mkisofs -R -J -G iso/gbi.hdr -no-emul-boot -b megaloader.dol -o MegaLoader/megaloader.iso iso/disc/
+	@iso/dollz3 megaloader.dol iso/disc_temp/megaloader.dol
+	@cp megaloader.dol iso/disc_temp/
+	@iso/mkisofs -R -J -G iso/gbi.hdr -no-emul-boot -b megaloader.dol -o MegaLoader/megaloader.iso iso/disc_temp/
 	@rar a MegaLoader$(VERSION).rar MegaLoader/megaloader.dol MegaLoader/megaloader-lz.dol MegaLoader/megaloader-lz-viper.dol MegaLoader/megaloader.iso
+	@rm -rf iso/disc_temp/
 #---------------------------------------------------------------------------------
+iso9660:
+## to make homebrew iso...
+## load emulators and rom files into directory iso/disc
+## then run command to build iso disc called "megaloader_homebrew.iso"
+## usage "make iso"
+	@cp megaloader.dol iso/disc/
+	@iso/mkisofs -R -J -G iso/gbi.hdr -no-emul-boot -b megaloader.dol -o megaloader_homebrew.iso iso/disc/
+	@rm -rf iso/disc/megaloader.dol
+
+#---------------------------------------------------------------------------------
+
+
 run:	
 	$(DEVKITPRO)/emulators/gcube/gcube $(OUTPUT).dol
 
