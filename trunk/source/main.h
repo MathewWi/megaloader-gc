@@ -12,6 +12,14 @@
 #include <stdio.h>
 #include <ogcsys.h>
 
+#include "aram/sidestep.h"
+#include "dvd.h"
+#include "FrameBufferMagic.h"
+#include "IPLFontWrite.h"
+#include "wkf.h"
+
+#define _VERSION "v1.3"
+
 //Console Version Type Helpers
 #define GC_CPU_VERSION01 0x00083214
 #define GC_CPU_VERSION02 0x00083410
@@ -37,7 +45,14 @@ extern GXRModeObj *vmode;	/*** Graphics Mode Object ***/
 extern u32 *xfb[2];		/*** Framebuffers ***/
 extern int whichfb;		/*** Frame buffer toggle ***/
 
-extern void __SYS_ReadROM(void *buf,u32 len,u32 offset);
-extern char IPLInfo[256] __attribute__((aligned(32)));
-void RunDOL(char *EmuName);
+int retDVD;
+int rootDVD;
+int emusDVD;
+int megaDVD;
+char EmuName[50];
+char RunEmu[100];
+char Found[100];
+
+void __SYS_ReadROM(void *buf,u32 len,u32 offset);
+char IPLInfo[256] __attribute__((aligned(32)));
 #endif

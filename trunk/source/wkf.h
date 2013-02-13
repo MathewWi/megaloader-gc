@@ -17,15 +17,8 @@
 
 #define DEVICE_TYPE_GC_WKF	(('W'<<24)|('K'<<16)|('F'<<8)|'!')
 
-//extern WKFfile_handle initial_WKF;
-extern const DISC_INTERFACE __io_wkf;
 
-//int deviceHandler_WKF_readDir(WKFfile_handle*, file_handle**, unsigned int);
-//int deviceHandler_WKF_readFile(file_handle*, void*, unsigned int);
-//int deviceHandler_WKF_seekFile(file_handle*, unsigned int, unsigned int);
-//void deviceHandler_WKF_setupFile(file_handle* file, file_handle* file2);
-//int deviceHandler_WKF_init(file_handle* file);
-//int deviceHandler_WKF_deinit(file_handle* file);
+//extern const DISC_INTERFACE __io_wkf;
 
 
 void wkfWriteRam(int offset, int data);
