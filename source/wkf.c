@@ -21,12 +21,7 @@
 #include <sys/dir.h>
 #include <ogc/machine/processor.h>
 #include <sdcard/gcsd.h>
-//#include "frag.h"
 
-#include "aram/sidestep.h"
-#include "FrameBufferMagic.h"
-#include "IPLFontWrite.h"
-#include "main.h"
 #include "wkf.h"
 
 #define WKF_BUF_SIZE 0x8000

@@ -105,14 +105,14 @@ struct pvd_s
 extern file_entries *DVDToc;
 
 void dvd_motor_off();
-unsigned int dvd_get_error(void);
-int dvd_read_directoryentries(uint64_t offset, int size);
+//unsigned int dvd_get_error(void);
+//int dvd_read_directoryentries(uint64_t offset, int size);
 //void read_directory(int sector, int len);
-int read_direntry(unsigned char* direntry);
-int read_sector(void* buffer, int numSectors, u32 sector);
-int dvd_read(void* dst,unsigned int len, unsigned int offset);
-int dvd_read_id();
-int DVD_LowRead64(void* dst, unsigned int len, uint64_t offset);
+//int read_direntry(unsigned char* direntry);
+//int read_sector(void* buffer, int numSectors, u32 sector);
+//int dvd_read(void* dst,unsigned int len, unsigned int offset);
+//int dvd_read_id();
+//int DVD_LowRead64(void* dst, unsigned int len, uint64_t offset);
 
 void DVD_Initialize();
 int gettype_disc();

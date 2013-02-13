@@ -10,13 +10,11 @@
 #define FRAMEBUFFERMAGIC_H
 
 #include <gccore.h>
-
+#include "images/buttons/btns.h"
 #include "dvd.h"
 #include "IPLFontWrite.h"
 #include "main.h"
 #include "wkf.h"
-
-#define _VERSION "v1.3"
 
 #define B_NOSELECT 0
 #define B_SELECTED 1
@@ -29,57 +27,46 @@
 
 enum TextureId
 {
-	TEX_BACKDROP=0,
-	TEX_SDIN,
-	TEX_SDOUT,
-	TEX_DVDIN,
-	TEX_DVDOUT,	
-	TEX_BANNER,
-	TEX_BTNA,
-	TEX_BTNB,
-	TEX_BTNZ,
-	TEX_LOGOBORDER,
-//	TEX_LOGOATARI,
-	TEX_LOGOCOLECO,
-	TEX_LOGOGBA,
-	TEX_LOGOGENESIS,
-	TEX_LOGON64,
-	TEX_LOGONES,
-	TEX_LOGONGCD,
-	TEX_LOGONGP,
-	TEX_LOGOPSX,
-	TEX_LOGOSNES,
-	TEX_LOGOTGX,
-	TEX_LOGOVECTREX,
-	TEX_LOGOSCUMMVM,
-	TEX_LOGOCHIP8,
-	TEX_LOGOPONG,
-	TEX_LOGOQUAKE,
-	TEX_LOGOFRUIT,
-	TEX_LOGOTETRIS,
-	TEX_LOGOAF,
-	TEX_LOGOBREAK,
-	TEX_LOGOSNOW,
-	TEX_LOGOMETH,
-	TEX_LOGOGC,
-	TEX_LOGOQBOX
-	
+   TEX_BACKDROP=0,
+   TEX_SDIN,
+   TEX_SDOUT,
+   TEX_DVDIN,
+   TEX_DVDOUT,	
+   TEX_BANNER,
+   TEX_BTNA,
+   TEX_BTNB,
+   TEX_BTNZ,
+   TEX_LOGOBORDER,
+// TEX_LOGOATARI,
+   TEX_LOGOCOLECO,
+   TEX_LOGOGBA,
+   TEX_LOGOGENESIS,
+   TEX_LOGON64,
+   TEX_LOGONES,
+   TEX_LOGONGCD,
+   TEX_LOGONGP,
+   TEX_LOGOPSX,
+   TEX_LOGOSNES,
+   TEX_LOGOTGX,
+   TEX_LOGOVECTREX,
+   TEX_LOGOSCUMMVM,
+   TEX_LOGOCHIP8,
+   TEX_LOGOPONG,
+   TEX_LOGOQUAKE,
+   TEX_LOGOFRUIT,
+   TEX_LOGOTETRIS,
+   TEX_LOGOAF,
+   TEX_LOGOBREAK,
+   TEX_LOGOSNOW,
+   TEX_LOGOMETH,
+   TEX_LOGOGC,
+   TEX_LOGOQBOX
 };
-
-extern GXRModeObj *vmode;
-extern u32 *xfb[2];
-extern int whichfb;
-extern void doBackdrop();
 
 void init_textures();
 void DrawImage(int textureId, int x, int y, int width, int height, int depth, float s1, float s2, float t1, float t2);
 void DrawFrameStart();
 void DrawFrameFinish();
 void DrawEmptyBox(int x1, int y1, int x2, int y2, int color);
-
-void DrawMenuSelector(int x, int y);
-void DrawMenuLogos();
-void DrawMenuButtons();
-void DrawConfirm(int x, int y);
-
+void readme();
 #endif

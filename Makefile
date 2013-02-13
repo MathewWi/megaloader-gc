@@ -51,7 +51,7 @@ DATA		:=	data
 TEXTURES	:=	source/images \
 				source/images/buttons
 INCLUDES	:= 	include $(SOURCES)
-#VERSION = _v1.3
+VERSION		 =	MegaLoader_v
 #---------------------------------------------------------------------------------
 # options for code generation
 #---------------------------------------------------------------------------------
@@ -138,36 +138,48 @@ $(BUILD):
 #---------------------------------------------------------------------------------
 clean:
 	@echo clean ...
+	@rm -fr $(BUILD) $(OUTPUT).elf $(OUTPUT).dol
+
+#---------------------------------------------------------------------------------
+cleaner:
+	@echo cleaner ...
+	@rm -fr $(BUILD) $(OUTPUT).elf $(OUTPUT).dol MegaLoader
+
+#---------------------------------------------------------------------------------
+clean-all:
+	@echo clean all ...
 	@rm -fr $(BUILD) $(OUTPUT).elf $(OUTPUT).dol MegaLoader MegaLoader*.rar megaloader_homebrew.iso
 
 #---------------------------------------------------------------------------------
 rar:
 ## to make distribution package...
-## usage "make rar VERSION=x.x"
+## Usage: make rar
+## Wait for prompt: enter version number
 	@rm -rf MegaLoader MegaLoader*.rar iso/disc_temp/
 	@mkdir MegaLoader
 	@mkdir iso/disc_temp/
 	@cp megaloader.dol MegaLoader
 	@iso/dollz3 megaloader.dol MegaLoader/megaloader-lz.dol -m
 	@iso/dollz3 megaloader.dol MegaLoader/megaloader-lz-viper.dol -m -v
-	@iso/dollz3 megaloader.dol iso/disc_temp/megaloader.dol
 	@cp megaloader.dol iso/disc_temp/
 	@iso/mkisofs -R -J -G iso/gbi.hdr -no-emul-boot -b megaloader.dol -o MegaLoader/megaloader.iso iso/disc_temp/
-	@rar a MegaLoader$(VERSION).rar MegaLoader/megaloader.dol MegaLoader/megaloader-lz.dol MegaLoader/megaloader-lz-viper.dol MegaLoader/megaloader.iso
+	@md5sum MegaLoader/* > MegaLoader/md5.txt
+	@echo;echo;echo;read -p "Type Version and Press Enter:  " -e -i "$(VERSION)" version; rar a $$version.rar MegaLoader/megaloader.dol MegaLoader/megaloader-lz.dol MegaLoader/megaloader-lz-viper.dol MegaLoader/megaloader.iso MegaLoader/md5.txt
 	@rm -rf iso/disc_temp/
 #---------------------------------------------------------------------------------
 iso9660:
 ## to make homebrew iso...
 ## load emulators and rom files into directory iso/disc
 ## then run command to build iso disc called "megaloader_homebrew.iso"
-## usage "make iso"
+## Usage: make iso
 	@cp megaloader.dol iso/disc/
 	@iso/mkisofs -R -J -G iso/gbi.hdr -no-emul-boot -b megaloader.dol -o megaloader_homebrew.iso iso/disc/
 	@rm -rf iso/disc/megaloader.dol
 
 #---------------------------------------------------------------------------------
+dist: clean-all $(BUILD) rar cleaner
 
-
+#---------------------------------------------------------------------------------
 run:	
 	$(DEVKITPRO)/emulators/gcube/gcube $(OUTPUT).dol
 

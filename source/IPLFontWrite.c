@@ -13,13 +13,7 @@
 #include <ogcsys.h>
 #include <string.h>
 
-#include "dvd.h"
-#include "FrameBufferMagic.h"
 #include "IPLFontWrite.h"
-#include "main.h"
-#include "wkf.h"
-
-extern void __SYS_ReadROM(void *buf,u32 len,u32 offset);
 
 #define FONT_TEX_SIZE_I4 ((512*512)>>1)
 #define FONT_SIZE_ANSI (288 + 131072)
