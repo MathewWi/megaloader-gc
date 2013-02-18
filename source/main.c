@@ -125,20 +125,21 @@ void FindDOL(char *EmuName)
    int ret1 = 0;
 
    DrawFrameStart();
-
-   ret =  slotA->startup() && slotA->isInserted();
-   ret1 = slotB->startup() && slotB->isInserted();
-
+      fatInitDefault ();
+//   ret =  slotA->startup() && slotA->isInserted();
+//   ret1 = slotB->startup() && slotB->isInserted();
+   ret =  slotA->startup() && fatMountSimple("SDA1", slotA);
+   ret1 = slotB->startup() && fatMountSimple("SDB1", slotB);
    // CHECK WHICH SD CARDSLOT(S) ARE DETECTED
    // SD CARDSLOT A
    if (ret <= 0) {
       DrawImage(TEX_SDOUT, 25+(0.50*116), 125, 175, 200, 0, 0.0f, 1.0f, 0.0f, 1.0f);
       WriteFont(25+(0.60*116)+10,190, "SD CARD A");
       WriteFont(25+(0.60*116)+10,215, "No SD Card");
-      slotA->shutdown();
+//      slotA->shutdown();
    }
    else {
-      fatInitDefault ();
+//      fatInitDefault ();
       fatMountSimple("SDA1", slotA);
       DrawImage(TEX_SDIN, 25+(0.50*116), 125, 175, 200, 0, 0.0f, 1.0f, 0.0f, 1.0f);
       WriteFont(25+(0.60*116)+10,190, "SD CARD A");
@@ -151,10 +152,10 @@ void FindDOL(char *EmuName)
       DrawImage(TEX_SDOUT, 25+(3*116), 125, 175, 200, 0, 0.0f, 1.0f, 0.0f, 1.0f);
       WriteFont(25+(3.10*116)+10,190, "SD CARD B");
       WriteFont(25+(3.10*116)+10,215, "No SD Card");
-      slotB->shutdown();
+//      slotB->shutdown();
    }
    else {
-      fatInitDefault ();
+//      fatInitDefault ();
       fatMountSimple("SDB1", slotB);
       DrawImage(TEX_SDIN, 25+(3*116), 125, 175, 200, 0, 0.0f, 1.0f, 0.0f, 1.0f);
       WriteFont(25+(3.10*116)+10,190, "SD CARD B");

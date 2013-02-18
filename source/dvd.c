@@ -532,16 +532,16 @@ void DVD_ISO9660(char *EmuName)
       }
       else if(dvdDiscTypeInt == ISO9660_DISC) {
          int retDVD=0;
+         int errDVD=0;
          int rootDVD=0;
-         int rootDVD1=0;
-//         int emusDVD=0;
-//         int megaDVD=0;
+         int emusDVD=0;
+         int megaDVD=0;
+	 int count=0;
 
          // NOTE: FOR SD SEARCH WE SHOOK THE TREE...NOW FOR DVD SEARCH, WERE GONNA CUT THE DAMN TREE DOWN
          while((retDVD==0)){ 
-            retDVD = 1;
             num_entries = dvd_read_directoryentries(offset, size);	
-            if(num_entries <= 0) { rootDVD = 1; }
+            if(num_entries <= 0) { retDVD = 1; errDVD = 1;}
             else {
                dir = memalign(32, num_entries * sizeof(file_handle));
                int i;
@@ -554,11 +554,11 @@ void DVD_ISO9660(char *EmuName)
                         DVD_Read(dol,(dir)[i].fileBase,DVDToc->file[i].size);
                         DOLtoARAM(dol);
                         return;
-                     }
+                     } rootDVD = 1;
                   }
-               } rootDVD1 = 1;
+               } rootDVD = 1;
                // SEARCH EMUS DIR
- /*              if (emusDVD == 0){
+               if (emusDVD == 0){
                   for(i=0; i<num_entries; ++i){
                      if (strcmp(DVDToc->file[i].name, "emus/") == 0){
                         (dir)[i].fileBase = (uint64_t)(((uint64_t)DVDToc->file[i].sector)*2048);
@@ -573,14 +573,14 @@ void DVD_ISO9660(char *EmuName)
                                  DVD_Read(dol,(dir)[i].fileBase,DVDToc->file[i].size);
                                  DOLtoARAM(dol);
                                  return;
-                              }
+                              } emusDVD=1;
                            } // emusDVD=1;
                         }
                      } emusDVD=1;
                   }
                }
                // SEARCH MEGALOADER DIR
-               if (megaDVD == 0){
+               if ((megaDVD == 0) || (count <= 5)){
                   for(i=0; i<num_entries; ++i){
                      if (strcmp(DVDToc->file[i].name, "megaloader/") == 0){
                         (dir)[i].fileBase = (uint64_t)(((uint64_t)DVDToc->file[i].sector)*2048);
@@ -595,13 +595,17 @@ void DVD_ISO9660(char *EmuName)
                                  DVD_Read(dol,(dir)[i].fileBase,DVDToc->file[i].size);
                                  DOLtoARAM(dol);
                                  return;
-                              }
-                           } // emusDVD=1;
+                              } megaDVD=1;
+                           } // megaDVD=1;
                         }
-                     } emusDVD=1;
+                     } 
+                     count+=1;
+		     if (count == 5) megaDVD=1;
                   }
                }
-  */          }
+            } 
+            // exit loop
+            if ( (rootDVD == 1) && (emusDVD == 1) && (megaDVD == 1) ) { retDVD=1;}
          }
          // EXIT DVD SEARCH
          // DOL NOT FOUND ON DVD..
@@ -609,13 +613,13 @@ void DVD_ISO9660(char *EmuName)
          DrawImage(TEX_DVDIN, 25+(1.25*116), 85, 300, 300, 0, 0.0f, 1.0f, 0.0f, 1.0f);
          WriteFont(25+(2.25*116)+10,125, "DVD");
          WriteFont(25+(1.95*116)+10,150, "Searching...");
-//         if ( (emusDVD == 1) && (megaDVD == 1) ) { WriteFont(25+(1.68*116)+10,300, "DOL Not Found"); }
+         if ( (rootDVD == 1) && (emusDVD == 1) && (megaDVD == 1) ) { WriteFont(25+(1.68*116)+10,300, "DOL Not Found"); }
+         else if ( (errDVD = 1) ) { WriteFont(25+(1.68*116)+10,300, "No Data Found"); }
+//         if ( (rootDVD1 = 1) ) { WriteFont(25+(1.68*116)+10,300, "DOL Not Found"); }
 //         else if ( (rootDVD = 1) ) { WriteFont(25+(1.68*116)+10,300, "No Data Found"); }
-         if ( (rootDVD1 = 1) ) { WriteFont(25+(1.68*116)+10,300, "DOL Not Found"); }
-         else if ( (rootDVD = 1) ) { WriteFont(25+(1.68*116)+10,300, "No Data Found"); }
       }
    }
-   sprintf(Found,"Could Not Find: %s",EmuName);
+   sprintf(Found,"Can Not Find: %s",EmuName);
    WriteFont(25+(0*116)+10,425, Found);
    DrawFrameFinish();
    sleep(8);
