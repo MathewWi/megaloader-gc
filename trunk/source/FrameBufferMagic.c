@@ -64,6 +64,8 @@
 #include "logotgx.h"
 #include "logovectrex_tpl.h"
 #include "logovectrex.h"
+#include "logognuboy_tpl.h"
+#include "logognuboy.h"
 
 #include "logoscummvm_tpl.h"
 #include "logoscummvm.h"
@@ -145,6 +147,8 @@ TPLFile logotgxTPL;
 GXTexObj logotgxTexObj;
 TPLFile logovectrexTPL;
 GXTexObj logovectrexTexObj;
+TPLFile logognuboyTPL;
+GXTexObj logognuboyTexObj;
 
 TPLFile logoscummvmTPL;
 GXTexObj logoscummvmTexObj;
@@ -233,6 +237,8 @@ void init_textures()
    TPL_GetTexture(&logotgxTPL,logotgx,&logotgxTexObj);
    TPL_OpenTPLFromMemory(&logovectrexTPL, (void *)logovectrex_tpl, logovectrex_tpl_size);
    TPL_GetTexture(&logovectrexTPL,logovectrex,&logovectrexTexObj);
+   TPL_OpenTPLFromMemory(&logognuboyTPL, (void *)logognuboy_tpl, logognuboy_tpl_size);
+   TPL_GetTexture(&logognuboyTPL,logognuboy,&logognuboyTexObj);
 
    TPL_OpenTPLFromMemory(&logoscummvmTPL, (void *)logoscummvm_tpl, logoscummvm_tpl_size);
    TPL_GetTexture(&logoscummvmTPL,logoscummvm,&logoscummvmTexObj);
@@ -427,6 +433,9 @@ void DrawImage(int textureId, int x, int y, int width, int height, int depth, fl
       case TEX_LOGOVECTREX:
          GX_LoadTexObj(&logovectrexTexObj, GX_TEXMAP0);
          break;
+      case TEX_LOGOGNUBOY:
+         GX_LoadTexObj(&logognuboyTexObj, GX_TEXMAP0);
+         break;
 
       case TEX_LOGOSCUMMVM:
          GX_LoadTexObj(&logoscummvmTexObj, GX_TEXMAP0);
@@ -597,7 +606,7 @@ Main Window:
    NeoGeo Portable  = neopopgc.dol
 
    PSX              = cubeSX.dol
-   Vectrex          = vecxgc.dol
+   Gnuboy           = gnuboy_cube.dol
    ColecoVision     = collisionGC.dol
    GAMECUBE         = GCM
 
@@ -615,5 +624,6 @@ Second Window:
 
    Snowlords        = snowlords.dol
    SuperMethaneBros = methane.dol
+   Vectrex          = vecxgc.dol
    MarioBox         = Extra Info
 */

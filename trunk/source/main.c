@@ -68,10 +68,10 @@ void DrawMenuLogos()
       DrawImage(TEX_LOGONGCD, 40+(2.50*116), 200, LOGONGCD_WIDTH,LOGONGCD_HEIGHT, 0, 0.0f, 1.0f, 0.0f, 1.0f);
       DrawImage(TEX_LOGONGP,  40+(3.75*116), 200, LOGONGP_WIDTH,LOGONGP_HEIGHT,   0, 0.0f, 1.0f, 0.0f, 1.0f);
 
-      DrawImage(TEX_LOGOPSX,  40+(0*116),    300, LOGOPSX_WIDTH,LOGOPSX_HEIGHT,   0, 0.0f, 1.0f, 0.0f, 1.0f);
-      DrawImage(TEX_LOGOVECTREX,40+(1.25*116), 300, LOGOVECTREX_WIDTH, LOGOVECTREX_HEIGHT,0, 0.0f, 1.0f, 0.0f, 1.0f);
-      DrawImage(TEX_LOGOCOLECO, 40+(2.50*116), 300, LOGOCOLECO_WIDTH, LOGOCOLECO_HEIGHT,  0, 0.0f, 1.0f, 0.0f, 1.0f);
-      DrawImage(TEX_LOGOGC,	40+(3.75*116), 300, LOGOGC_WIDTH, LOGOGC_HEIGHT,    0, 0.0f, 1.0f, 0.0f, 1.0f);
+      DrawImage(TEX_LOGOPSX,  40+(0*116),     300, LOGOPSX_WIDTH,LOGOPSX_HEIGHT,   0, 0.0f, 1.0f, 0.0f, 1.0f);
+      DrawImage(TEX_LOGOGNUBOY,40+(1.25*116), 300, LOGOGNUBOY_WIDTH, LOGOGNUBOY_HEIGHT,0, 0.0f, 1.0f, 0.0f, 1.0f);
+      DrawImage(TEX_LOGOCOLECO, 40+(2.50*116),300, LOGOCOLECO_WIDTH, LOGOCOLECO_HEIGHT,  0, 0.0f, 1.0f, 0.0f, 1.0f);
+      DrawImage(TEX_LOGOGC,	40+(3.75*116),300, LOGOGC_WIDTH, LOGOGC_HEIGHT,    0, 0.0f, 1.0f, 0.0f, 1.0f);
      // DrawImage(TEX_Z, 40+(3.75*116), 300, Z_WIDTH, Z_HEIGHT, 0, 0.0f, 1.0f, 0.0f, 1.0f);
    }
    if (curMenu==1){
@@ -85,9 +85,9 @@ void DrawMenuLogos()
       DrawImage(TEX_LOGOAF,    40+(2.50*116),200, LOGOAF_WIDTH,LOGOAF_HEIGHT,      0, 0.0f, 1.0f, 0.0f, 1.0f);
       DrawImage(TEX_LOGOBREAK, 40+(3.75*116),200, LOGOBREAK_WIDTH,LOGOBREAK_HEIGHT,0, 0.0f, 1.0f, 0.0f, 1.0f);
 
-      DrawImage(TEX_LOGOSNOW,  40+(0*116),   300, LOGOSNOW_WIDTH,LOGOSNOW_HEIGHT,  0, 0.0f, 1.0f, 0.0f, 1.0f);
-      DrawImage(TEX_LOGOMETH,  40+(1.25*116),300, LOGOMETH_WIDTH,LOGOMETH_HEIGHT,  0, 0.0f, 1.0f, 0.0f, 1.0f);
-     // DrawImage(TEX_Y, 40+(2.50*116), 300, Y_WIDTH, Y_HEIGHT, 0, 0.0f, 1.0f, 0.0f, 1.0f);
+      DrawImage(TEX_LOGOSNOW,  40+(0*116),    300, LOGOSNOW_WIDTH,LOGOSNOW_HEIGHT,  0, 0.0f, 1.0f, 0.0f, 1.0f);
+      DrawImage(TEX_LOGOMETH,  40+(1.25*116), 300, LOGOMETH_WIDTH,LOGOMETH_HEIGHT,  0, 0.0f, 1.0f, 0.0f, 1.0f);
+      DrawImage(TEX_LOGOVECTREX,40+(2.50*116),300, LOGOVECTREX_WIDTH, LOGOVECTREX_HEIGHT,0, 0.0f, 1.0f, 0.0f, 1.0f);
       if (easteregg == 1) 
          DrawImage(TEX_LOGOQBOX, 40+(3.75*116), 300, LOGOQBOX_WIDTH,LOGOQBOX_HEIGHT, 0, 0.0f, 1.0f, 0.0f, 1.0f);
    }
@@ -125,25 +125,20 @@ void FindDOL(char *EmuName)
    int ret1 = 0;
 
    DrawFrameStart();
-      fatInitDefault ();
-//   ret =  slotA->startup() && slotA->isInserted();
-//   ret1 = slotB->startup() && slotB->isInserted();
-   ret =  slotA->startup() && fatMountSimple("SDA1", slotA);
-   ret1 = slotB->startup() && fatMountSimple("SDB1", slotB);
+   fatInitDefault ();
+   ret =  slotA->startup() && fatMountSimple("SDA", slotA);
+   ret1 = slotB->startup() && fatMountSimple("SDB", slotB);
+
    // CHECK WHICH SD CARDSLOT(S) ARE DETECTED
    // SD CARDSLOT A
    if (ret <= 0) {
       DrawImage(TEX_SDOUT, 25+(0.50*116), 125, 175, 200, 0, 0.0f, 1.0f, 0.0f, 1.0f);
       WriteFont(25+(0.60*116)+10,190, "SD CARD A");
       WriteFont(25+(0.60*116)+10,215, "No SD Card");
-//      slotA->shutdown();
    }
    else {
-//      fatInitDefault ();
-      fatMountSimple("SDA1", slotA);
       DrawImage(TEX_SDIN, 25+(0.50*116), 125, 175, 200, 0, 0.0f, 1.0f, 0.0f, 1.0f);
       WriteFont(25+(0.60*116)+10,190, "SD CARD A");
-      WriteFont(25+(0.60*116)+10,215, "Searching...");
    }
 
 
@@ -152,28 +147,26 @@ void FindDOL(char *EmuName)
       DrawImage(TEX_SDOUT, 25+(3*116), 125, 175, 200, 0, 0.0f, 1.0f, 0.0f, 1.0f);
       WriteFont(25+(3.10*116)+10,190, "SD CARD B");
       WriteFont(25+(3.10*116)+10,215, "No SD Card");
-//      slotB->shutdown();
    }
    else {
-//      fatInitDefault ();
-      fatMountSimple("SDB1", slotB);
       DrawImage(TEX_SDIN, 25+(3*116), 125, 175, 200, 0, 0.0f, 1.0f, 0.0f, 1.0f);
       WriteFont(25+(3.10*116)+10,190, "SD CARD B");
-      WriteFont(25+(3.10*116)+10,215, "Searching...");
    }
 
 
    // SEARCH SD CARDSLOT A
    if (ret > 0){
-      sprintf(RunEmu,"SDA1:/%s",EmuName);
+      WriteFont(25+(0.60*116)+10,215, "Searching...");
+
+      sprintf(RunEmu,"SDA:/%s",EmuName);
       fp = fopen(RunEmu, "r");
       if (fp == NULL)
       {
-         sprintf(RunEmu,"SDA1:/emus/%s",EmuName);
+         sprintf(RunEmu,"SDA:/emus/%s",EmuName);
          fp = fopen(RunEmu, "r");
          if (fp == NULL)
          {
-            sprintf(RunEmu,"SDA1:/megaloader/%s",EmuName);
+            sprintf(RunEmu,"SDA:/megaloader/%s",EmuName);
             fp = fopen(RunEmu, "r");
             if (fp == NULL)
             {
@@ -188,15 +181,17 @@ void FindDOL(char *EmuName)
 
    // SEARCH SD CARDSLOT B
    if (ret1 > 0){
-      sprintf(RunEmu,"SDB1:/%s",EmuName);
+      WriteFont(25+(3.10*116)+10,215, "Searching...");
+
+      sprintf(RunEmu,"SDB:/%s",EmuName);
       fp = fopen(RunEmu, "r");
       if (fp == NULL)
       {
-         sprintf(RunEmu,"SDB1:/emus/%s",EmuName);
+         sprintf(RunEmu,"SDB:/emus/%s",EmuName);
          fp = fopen(RunEmu, "r");
          if (fp == NULL)
          {
-            sprintf(RunEmu,"SDB1:/megaloader/%s",EmuName);
+            sprintf(RunEmu,"SDB:/megaloader/%s",EmuName);
             fp = fopen(RunEmu, "r");
             if (fp == NULL)
             {
@@ -211,18 +206,18 @@ void FindDOL(char *EmuName)
    
    // DOL NOT FOUND ON SD SLOT A/B...
    // SAFETY CHECK TO PREVENT MOUNTING WIIKEY FUSION
-//   if(__wkfSpiReadId() != 0 && __wkfSpiReadId() != 0xFFFFFFFF) {
-//      DrawImage(TEX_DVDOUT, 25+(1.25*116), 85, 300, 300, 0, 0.0f, 1.0f, 0.0f, 1.0f);
-//      WriteFont(25+(1.70*116)+10,125, "WKF DETECTED");
-//      WriteFont(25+(1.60*116)+10,300, "Not ISO9660 Disc");
-//      DrawFrameFinish();
-//      sleep(5);
-//   }
-//   else {
-   // DOL NOT FOUND ON SD SLOT A/B...
-   // SEARCH DVD
-   DVD_ISO9660(EmuName);
-   //}
+   //   IF WKF FOUND: THEN STOP SEARCH
+   if(__wkfSpiReadId() != 0 && __wkfSpiReadId() != 0xFFFFFFFF) {
+      DrawImage(TEX_DVDOUT, 25+(1.25*116), 85, 300, 300, 0, 0.0f, 1.0f, 0.0f, 1.0f);
+      WriteFont(25+(1.66*116)+10,125, "WKF DETECTED");
+      WriteFont(25+(1.58*116)+10,300, "NOT SUPPORTED");
+      DrawFrameFinish();
+      sleep(5);
+   }
+   else {
+      // SEARCH DVD
+      DVD_ISO9660(EmuName);
+   }
 
    return;
 }
@@ -259,7 +254,7 @@ void DrawConfirm(x,y)
          sprintf(EmuName, "hugo_cube.dol");}
       else if (x == 315 && y == 185) {
          DrawImage(TEX_LOGONGCD,    25+(2.25*116)-57, 125, 185, 145, 0, 0.0f, 1.0f, 0.0f, 1.0f);
-         sprintf(EmuName, "neocdredux.dol"); }
+         sprintf(EmuName, "neocd-redux.dol"); }
       else if (x == 460 && y == 185) {
          DrawImage(TEX_LOGONGP,     25+(2.25*116)-57, 125, 185, 145, 0, 0.0f, 1.0f, 0.0f, 1.0f);
          sprintf(EmuName, "neopopgc.dol"); }
@@ -268,8 +263,8 @@ void DrawConfirm(x,y)
          DrawImage(TEX_LOGOPSX,     25+(2.25*116)-57, 125, 185, 145, 0, 0.0f, 1.0f, 0.0f, 1.0f);
          sprintf(EmuName, "cubeSX.dol"); }
       else if (x == 170 && y == 285) {
-         DrawImage(TEX_LOGOVECTREX, 25+(2.25*116)-57, 125, 185, 145, 0, 0.0f, 1.0f, 0.0f, 1.0f);
-         sprintf(EmuName, "vecxgc.dol"); }
+         DrawImage(TEX_LOGOGNUBOY, 25+(2.25*116)-57, 125, 185, 145, 0, 0.0f, 1.0f, 0.0f, 1.0f);
+         sprintf(EmuName, "gnuboy_cube.dol"); }
       else if (x == 315 && y == 285) {
          DrawImage(TEX_LOGOCOLECO,  25+(2.25*116)-57, 125, 185, 145, 0, 0.0f, 1.0f, 0.0f, 1.0f);
          sprintf(EmuName, "collisionGC.dol"); }
@@ -312,7 +307,9 @@ void DrawConfirm(x,y)
       else if (x == 170 && y == 285) {
          DrawImage(TEX_LOGOMETH, 25+(2.25*116)-57, 125, 185, 145, 0, 0.0f, 1.0f, 0.0f, 1.0f);
          sprintf(EmuName, "methane.dol"); }
-      else if (x == 315 && y == 285) { return; }
+      else if (x == 315 && y == 285) { 
+         DrawImage(TEX_LOGOVECTREX, 25+(2.25*116)-57, 125, 185, 145, 0, 0.0f, 1.0f, 0.0f, 1.0f);
+         sprintf(EmuName, "vecxgc.dol"); }
       else if (x == 460 && y == 285) {
          if (easteregg == 0) {
             DrawMenuLogos();
@@ -336,7 +333,7 @@ void DrawConfirm(x,y)
    DrawFrameFinish();
 
    while(1){
-      //CONFIRM A = EXECUTE DOL	
+      //CONFIRM A = EXECUTE DOL
       while (PAD_ButtonsDown(0) & PAD_BUTTON_A) {
          FindDOL(EmuName);
          return;
